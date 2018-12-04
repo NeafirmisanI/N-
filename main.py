@@ -359,14 +359,15 @@ def parseFunctionContents(rawInput):
     return contents
 
 def getFunctionCallParams(words, idIndex, function):
-    print(words[idIndex + 1])
-    
+    if words[idIndex + 1] != "<-": pass
+
     rawWords = unsplitWords(words[idIndex + 2:])
+    #print(rawWords)
     params = rawWords.split(",")
     
-    print(params)
+    functionCorrectLastParam(params)
 
-    if len(params) != len(function.paramIdentifiers) or (function.paramIdentifiers[0] == "" and params[0] != ""):
+    if paramsLength != len(function.paramIdentifiers) or (function.paramIdentifiers[0] == "" and params[0] != ""):
         print("N#\nSyntaxError: Invalid parameter amount provided")
     return params
 
@@ -439,7 +440,7 @@ def unsplitWords(words):
             string += c
     return string
 
-def valueStr(string): #TODO: add isEndingIn}
+def valueStr(string): #TODO: add isEndingInCurlyBracket
     if isNumber(string):
         return string
     if isStringLiteral(string):
@@ -459,5 +460,14 @@ def isStringLiteral(string):
 def main():
     while True:
         executeList(sortStringIntoList(promptForInput()))
+
+def functionCorrectLastParam(list):
+    paramsLength = len(list)
+    pId = 1
+    for p in list:
+        print("Parsed param: " + str(p))
+        if(paramsLength == pId):
+            print("Last item p")
+        pId += 1
 
 main()
