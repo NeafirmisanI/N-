@@ -362,12 +362,10 @@ def getFunctionCallParams(words, idIndex, function):
     if words[idIndex + 1] != "<-": pass
 
     rawWords = unsplitWords(words[idIndex + 2:])
-    #print(rawWords)
     params = rawWords.split(",")
-    
     functionCorrectLastParam(params)
 
-    if paramsLength != len(function.paramIdentifiers) or (function.paramIdentifiers[0] == "" and params[0] != ""):
+    if len(params) != len(function.paramIdentifiers) or (function.paramIdentifiers[0] == "" and params[0] != ""):
         print("N#\nSyntaxError: Invalid parameter amount provided")
     return params
 
@@ -448,9 +446,9 @@ def valueStr(string): #TODO: add isEndingInCurlyBracket
     elif isVariable(string):
         return getVariableData(string)
     else:
-        #print("N#\nSyntaxError: Unknown VSTR identifier \"" + string + "\"")
-        #return ""
-        return string
+        print("N#\nSyntaxError: Unknown VSTR identifier \"" + string + "\"")
+        return ""
+        #return string
 
 def isStringLiteral(string):
     if string[0] != "\"": return False
@@ -465,9 +463,13 @@ def functionCorrectLastParam(list):
     paramsLength = len(list)
     pId = 1
     for p in list:
-        print("Parsed param: " + str(p))
         if(paramsLength == pId):
-            print("Last item p")
+            list[pId-1] = correct(str(p))
         pId += 1
+
+def correct(string):
+    strLength = len(string)
+    strToCorrect = strLength - 1
+    return string[0:strToCorrect]
 
 main()
