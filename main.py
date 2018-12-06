@@ -283,22 +283,22 @@ class Function():
         self.contents.append(statement)
 
     def execute(self, paramData):
-        global variableIdentifiers
-        global variableData
+        if bool(runFunction):
+            global variableIdentifiers
+            global variableData
 
-        variableIdentifiersBackup = variableIdentifiers
-        variableDataBackup = variableData
+            variableIdentifiersBackup = variableIdentifiers
+            variableDataBackup = variableData
 
-        if self.paramIdentifiers[0]:
-            for index, identifier in enumerate(self.paramIdentifiers):
-                setVariable(identifier, paramData[index])
-                #print(paramData[index])
+            if self.paramIdentifiers[0]:
+                for index, identifier in enumerate(self.paramIdentifiers):
+                    setVariable(identifier, paramData[index])
 
-        for s in self.contents:
-            executeList(s)
+            for s in self.contents:
+                executeList(s)
 
-        variableIdentifiers = variableIdentifiersBackup
-        variableData = variableDataBackup
+            variableIdentifiers = variableIdentifiersBackup
+            variableData = variableDataBackup
 
 def parseFunction(rawInput):
     rawMetadata = sortFunctionmetadataIntoList(rawInput)
@@ -359,14 +359,16 @@ def parseFunctionContents(rawInput):
     return contents
 
 def getFunctionCallParams(words, idIndex, function):
-    if words[idIndex + 1] != "<-": pass
-
+    #if words[idIndex + 1] != "<-": pass
+    global runFunction
+    runFunction = 1
     rawWords = unsplitWords(words[idIndex + 2:])
     params = rawWords.split(",")
     functionCorrectLastParam(params)
 
     if len(params) != len(function.paramIdentifiers) or (function.paramIdentifiers[0] == "" and params[0] != ""):
         print("N#\nSyntaxError: Invalid parameter amount provided")
+        runFunction = 0
     return params
 
 def parseParamNames(metadata, startIndex):
@@ -438,7 +440,7 @@ def unsplitWords(words):
             string += c
     return string
 
-def valueStr(string): #TODO: add isEndingInCurlyBracket
+def valueStr(string):
     if isNumber(string):
         return string
     if isStringLiteral(string):
@@ -448,7 +450,6 @@ def valueStr(string): #TODO: add isEndingInCurlyBracket
     else:
         print("N#\nSyntaxError: Unknown VSTR identifier \"" + string + "\"")
         return ""
-        #return string
 
 def isStringLiteral(string):
     if string[0] != "\"": return False
