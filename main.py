@@ -79,12 +79,19 @@ def value(words, index):
         return parseFunctionCall(words, index)
     elif isVariable(words[index]):
         return getVariableData(words[index])
+    elif isMath(words[3]):
+        return evaluate(words[3], words[2], words[4])
+    elif isMathPro(words[3]):
+        if words[3] == "factorial":
+            return evaluateFactorial(words[2])
+        else:
+            return evaluateFibonancci(words[2])
     else:
         print("N#\nSyntaxError: Unknown identifier \"" + words[index] + "\"")
         return ""
 
 def validateOperation(operand, operator):
-    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "individual" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/"))
+    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "individual" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/" or operator == "fibonacci" or operator == "factorial"))
     
     if not validExpression:
         print("N#\nSyntaxError: Invalid operator \"" + operator + "\" on operand \"" + operand + "'")
@@ -105,11 +112,13 @@ def isKeyword(string):
 
 def isOperator(string):
     operators = [
-        "="
-        "+"
+        "=",
+        "+",
         "-"
-        "*"
-        "/"
+        "*",
+        "/",
+        "factorial",
+        "fibonacci"
     ]
 
     for o in operators:
@@ -125,6 +134,11 @@ def nPrint(words):
         return
     if isMath(words[3]):
         print(evaluate(words[3], words[2], words[4]))
+    elif isMathPro(words[3]):
+        if words[3] == "factorial":
+            print(evaluateFactorial(words[2]))
+        else:
+            print(evaluateFibonancci(words[2]))
     if words[5] == "uppercase":
         print(value(words, 3).upper())
     elif words[5] == "lowercase":
@@ -136,8 +150,6 @@ def nPrint(words):
         print(value(words, 3).title())
     elif words[5] == "swapcase":
         print(value(words, 3).swapcase())
-    else:
-        print(value(words, 3))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -246,6 +258,11 @@ mathOperators = [
     "-",
     "*",
     "/"
+]
+
+mathProperties = [
+    "factorial",
+    "fibonacci"
 ]
 
 # End static assignment
@@ -472,5 +489,27 @@ def correct(string):
     strLength = len(string)
     strToCorrect = strLength - 1
     return string[0:strToCorrect]
+
+def isMathPro(words):
+    for i in mathProperties:
+        if words == i:
+            return True
+    return False
+
+def evaluateFactorial(n):
+    num = int(n)
+    if num == 0:
+        return 1
+    else:
+        return num * evaluateFactorial(num-1)
+    
+def evaluateFibonancci(n):
+    num = int(n)
+    if num == 0: 
+        return 0
+    elif num == 1: 
+        return 1
+    else: 
+        return evaluateFibonancci(num-1)+evaluateFibonancci(num-2)
 
 main()
