@@ -170,7 +170,10 @@ def executeList(words):
             if isMath(words[3]):
                 setVariable(words[0], evaluate(words[3], words[2], words[4]))
             else:
-                setVariable(words[0], value(words, 2))
+                if not words[2] == "Input":
+                    setVariable(words[0], value(words, 2))
+                else:
+                    setVariable(words[0], askForInput())
     else:
         value(words, 0)
 
@@ -511,5 +514,9 @@ def evaluateFibonancci(n):
         return 1
     else: 
         return evaluateFibonancci(num-1)+evaluateFibonancci(num-2)
+    
+def askForInput():
+    inp = input("")
+    return inp
 
 main()
