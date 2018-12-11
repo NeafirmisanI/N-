@@ -160,7 +160,10 @@ def executeList(words):
         print("N#\nSyntaxError: No Value Received")
         return
     elif words[0] == "Log":
-        nPrint(words)
+        if not words[2] == "Input":
+            nPrint(words)
+        else:
+            nPrint(askForInput)
     elif isFunction(words[0]):
         value(words, 0)
     elif words[0] == "system":
@@ -379,7 +382,6 @@ def parseFunctionContents(rawInput):
     return contents
 
 def getFunctionCallParams(words, idIndex, function):
-    #if words[idIndex + 1] != "<-": pass
     global runFunction
     runFunction = 1
     rawWords = unsplitWords(words[idIndex + 2:])
