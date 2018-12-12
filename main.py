@@ -50,7 +50,7 @@ def sortStringIntoList(string):
             index += 1
         else:
             index += 1
-    #print(words)
+    print(words)
     return words
 
 def findCloseQuote(string):
@@ -131,7 +131,6 @@ def nPrint(words):
     if isKeyword(words[3]): validateOperation(words[3], words[5])
     if isVariable(words[2]):
         print(getVariableData(words[2]))
-        return
     if isMath(words[3]):
         print(evaluate(words[3], words[2], words[4]))
     elif isMathPro(words[3]):
@@ -150,6 +149,8 @@ def nPrint(words):
         print(value(words, 3).title())
     elif words[5] == "swapcase":
         print(value(words, 3).swapcase())
+    elif words[5] == "":
+        print(value(words, 3))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
