@@ -5,3 +5,5 @@
 10/12/18: Added user input
 
 11/12/18: Added one more feature to user input
+
+12/12/18: Fixed an annoying bug on printing
