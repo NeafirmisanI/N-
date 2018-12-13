@@ -7,3 +7,5 @@
 11/12/18: Added one more feature to user input
 
 12/12/18: Fixed an annoying bug on printing
+
+13/12/18: Updated the way to recognise strings
