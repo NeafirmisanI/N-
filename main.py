@@ -36,12 +36,12 @@ def sortStringIntoList(string):
         if words[index] == "df":
             fnData = captureFn(string, i-2)
             parseFunction(fnData)
-        if s != ' ' and s != '\"':
+        if s != ' ' and s != '\"' and s != "\'":
             words[index] += s
             words.append("")
             stringLiteralIndexes.append(False)
             stringLiteralIndexes[index] = False
-        elif s == '\"':
+        elif s == '\"' or s == "\'":
             words[index] += getStringContents(i, string)
             i = getStringEndIndex(i, string) + 1
             words.append("")
@@ -50,12 +50,12 @@ def sortStringIntoList(string):
             index += 1
         else:
             index += 1
-    print(words)
+    #print(words)
     return words
 
 def findCloseQuote(string):
     for i, s in enumerate(string):
-        if s == '"':
+        if s == '"' or s == "'":
             return i
     return 0
 
@@ -63,7 +63,6 @@ def getStringContents(index, string):
     string = string[index+1:]
     endIndex = int(findCloseQuote(string))
     string = string[:endIndex]
-
     return string
 
 def getStringEndIndex(index, string):
