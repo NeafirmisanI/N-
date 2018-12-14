@@ -50,7 +50,7 @@ def sortStringIntoList(string):
             index += 1
         else:
             index += 1
-    #print(words)
+    print(words)
     return words
 
 def findCloseQuote(string):
@@ -90,7 +90,7 @@ def value(words, index):
         return ""
 
 def validateOperation(operand, operator):
-    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "individual" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/" or operator == "fibonacci" or operator == "factorial"))
+    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/" or operator == "fibonacci" or operator == "factorial"))
     
     if not validExpression:
         print("N#\nSyntaxError: Invalid operator \"" + operator + "\" on operand \"" + operand + "'")
@@ -99,7 +99,6 @@ def isKeyword(string):
     keywords = [
         "uppercase",
         "lowercase",
-        "individual",
         "camelcase",
         "swapcase"
     ]
@@ -137,19 +136,7 @@ def nPrint(words):
             print(evaluateFactorial(words[2]))
         else:
             print(evaluateFibonancci(words[2]))
-    if words[5] == "uppercase":
-        print(value(words, 3).upper())
-    elif words[5] == "lowercase":
-        print(value(words, 3).casefold())
-    elif words[5] == "individual":
-        for c in value(words, 3):
-            print(c)
-    elif words[5] == "camelcase":
-        print(value(words, 3).title())
-    elif words[5] == "swapcase":
-        print(value(words, 3).swapcase())
-    elif words[5] == "":
-        print(value(words, 3))
+    print(stringProcessing(3, words[5], words))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -171,12 +158,12 @@ def executeList(words):
     elif not isOperator(words[0]):
         if words[1] == "=":
             if isMath(words[3]):
-                setVariable(words[0], evaluate(words[3], words[2], words[4]))
+                setVariable(words[0], evaluate(words[3], words[2], words[4]), words)
             else:
                 if not words[2] == "Input":
-                    setVariable(words[0], value(words, 2))
+                    setVariable(words[0], 2, words)
                 else:
-                    setVariable(words[0], askForInput())
+                    setVariable(words[0], askForInput(), words)
     else:
         value(words, 0)
 
@@ -190,14 +177,15 @@ def getVariableData(identifier):
         if s == identifier:
             return variableData[i]
 
-def setVariable(identifier, data):
+def setVariable(identifier, num, words):
     if isNumber(identifier):
         print("N#\nSyntaxError: Number cannot be used as an identifier")
         return
+    db = stringProcessing(num, words[5], words)
     if isVariable(identifier):
-        variableData[getVariableIndex(identifier)] = data
+        variableData[getVariableIndex(identifier)] = db
     else:
-        assignVariable(identifier, data)
+        assignVariable(identifier, db)
 
 def getVariableIndex(identifier):
     for i, s in enumerate(variableIdentifiers):
@@ -305,7 +293,7 @@ class Function():
     def appendStatement(self, statement):
         self.contents.append(statement)
 
-    def execute(self, paramData):
+    def execute(self, paramData, words):
         if bool(runFunction):
             global variableIdentifiers
             global variableData
@@ -315,7 +303,7 @@ class Function():
 
             if self.paramIdentifiers[0]:
                 for index, identifier in enumerate(self.paramIdentifiers):
-                    setVariable(identifier, paramData[index])
+                    setVariable(identifier, paramData[index], words)
 
             for s in self.contents:
                 executeList(s)
@@ -428,16 +416,16 @@ def sortFunctionmetadataIntoList(rawInput):
     
     print("N#\nSyntaxError: Invalid function definition")
     
-def callFunction(identifier, paramData):
+def callFunction(identifier, paramData, words):
     function = functions[getFunctionIndex(identifier)]
-    return function.execute(paramData)
+    return function.execute(paramData, words)
 
 def parseFunctionCall(words, idIndex):
     function = functions[getFunctionIndex(words[idIndex])]
     if not function.paramIdentifiers:
-        callFunction(words[idIndex], [])
+        callFunction(words[idIndex], [], words)
     else:
-        callFunction(words[idIndex], getFunctionCallParams(words, idIndex, function))
+        callFunction(words[idIndex], getFunctionCallParams(words, idIndex, function), words)
         
 def isMath(operator):
     for i in mathOperators:
@@ -520,5 +508,17 @@ def evaluateFibonancci(n):
 def askForInput():
     inp = input("")
     return inp
+
+def stringProcessing(item, effect, words):
+    if effect == "uppercase":
+        return value(words, item).upper()
+    elif effect == "lowercase":
+        return value(words, item).casefold()
+    elif effect == "camelcase":
+        return value(words, item).title()
+    elif effect == "swapcase":
+        return value(words, item).swapcase()
+    elif effect == "":
+        return value(words, item)
 
 main()
