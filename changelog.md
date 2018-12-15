@@ -11,3 +11,5 @@
 13/12/18: Updated the way to recognise strings
 
 14/12/18: Added string processing capabilities to string variables
+
+15/12/18: Bug fixing
