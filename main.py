@@ -33,7 +33,7 @@ def sortStringIntoList(string):
     index = 0
     
     for i, s in enumerate(string):
-        if words[index] == "df":
+        if words[index] == "df" and index == 0:
             fnData = captureFn(string, i-2)
             parseFunction(fnData)
         if s != ' ' and s != '\"' and s != "\'":
@@ -125,18 +125,22 @@ def isOperator(string):
     return False
 
 def nPrint(words):
-    validateOperation(words[0], words[1])
-    if isKeyword(words[3]): validateOperation(words[3], words[5])
-    if isVariable(words[2]):
-        print(getVariableData(words[2]))
-    if isMath(words[3]):
-        print(evaluate(words[3], words[2], words[4]))
-    elif isMathPro(words[3]):
-        if words[3] == "factorial":
-            print(evaluateFactorial(words[2]))
-        else:
-            print(evaluateFibonancci(words[2]))
-    print(stringProcessing(3, words[5], words))
+    if words[5] != "+":
+        string = words[2]
+        validateOperation(words[0], words[1])
+        if isKeyword(words[3]): validateOperation(words[3], words[5])
+        if isVariable(string):
+            print(getVariableData(string))
+        if isMath(words[3]):
+            print(evaluate(words[3], string, words[4]))
+        elif isMathPro(words[3]):
+            if words[3] == "factorial":
+                print(evaluateFactorial(string))
+            else:
+                print(evaluateFibonancci(string))
+        print(stringProcessing(2, words[5], words))
+    else:
+        print("Joining strings together is not yet supported!")
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -161,7 +165,7 @@ def executeList(words):
                 setVariable(words[0], evaluate(words[3], words[2], words[4]), words)
             else:
                 if not words[2] == "Input":
-                    setVariable(words[0], 2, words)
+                    setVariable(words[0], 3, words)
                 else:
                     setVariable(words[0], askForInput(), words)
     else:
@@ -181,7 +185,8 @@ def setVariable(identifier, num, words):
     if isNumber(identifier):
         print("N#\nSyntaxError: Number cannot be used as an identifier")
         return
-    db = stringProcessing(num, words[5], words)
+    if words[5]:
+        db = stringProcessing(num, words[5], words)
     if isVariable(identifier):
         variableData[getVariableIndex(identifier)] = db
     else:
@@ -520,5 +525,7 @@ def stringProcessing(item, effect, words):
         return value(words, item).swapcase()
     elif effect == "":
         return value(words, item)
+    else:
+        return "N#\nSyntaxError: Invalid string processing effect"
 
 main()
