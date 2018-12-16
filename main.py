@@ -138,9 +138,21 @@ def nPrint(words):
                 print(evaluateFactorial(string))
             else:
                 print(evaluateFibonancci(string))
-        print(stringProcessing(2, words[5], words))
+        print(stringProcessing(words[5], string))
     else:
-        print("Joining strings together is not yet supported!")
+        string = join(words[2], words[6])
+        validateOperation(words[0], words[1])
+        if isKeyword(words[3]): validateOperation(words[3], words[5])
+        if isVariable(string):
+            print(getVariableData(string))
+        if isMath(words[3]):
+            print(evaluate(words[3], string, words[4]))
+        elif isMathPro(words[3]):
+            if words[3] == "factorial":
+                print(evaluateFactorial(string))
+            else:
+                print(evaluateFibonancci(string))
+        print(stringProcessing(words[9], string))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -458,18 +470,10 @@ def unsplitWords(words):
 def valueStr(string):
     if isNumber(string):
         return string
-    if isStringLiteral(string):
-        return string
     elif isVariable(string):
         return getVariableData(string)
     else:
-        print("N#\nSyntaxError: Unknown VSTR identifier \"" + string + "\"")
-        return ""
-
-def isStringLiteral(string):
-    if string[0] != "\"": return False
-    if string[len(string)-1] != "\"": return False
-    return True
+        return string
 
 def main():
     while True:
@@ -514,18 +518,21 @@ def askForInput():
     inp = input("")
     return inp
 
-def stringProcessing(item, effect, words):
+def stringProcessing(effect, string):
     if effect == "uppercase":
-        return value(words, item).upper()
+        return valueStr(string).upper()
     elif effect == "lowercase":
-        return value(words, item).casefold()
+        return valueStr(string).casefold()
     elif effect == "camelcase":
-        return value(words, item).title()
+        return string.title()
     elif effect == "swapcase":
-        return value(words, item).swapcase()
+        return string.swapcase()
     elif effect == "":
-        return value(words, item)
+        return string
     else:
         return "N#\nSyntaxError: Invalid string processing effect"
+    
+def join(str1, str2):
+    return str1 + str2
 
 main()
