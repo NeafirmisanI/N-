@@ -13,3 +13,5 @@
 14/12/18: Added string processing capabilities to string variables
 
 15/12/18: Bug fixing
+
+16/12/18: Added string joining
