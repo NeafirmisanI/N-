@@ -152,7 +152,7 @@ def nPrint(words):
                 print(evaluateFactorial(string))
             else:
                 print(evaluateFibonancci(string))
-        print(stringProcessing(words[9], string))
+        print(stringProcessing(words[7], string))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -161,6 +161,8 @@ def nSystem(words):
 def executeList(words):
     if words[0] == "":
         print("N#\nSyntaxError: No Value Received")
+        return
+    elif words[0] == "//":
         return
     elif words[0] == "Log":
         if not words[2] == "Input":
@@ -197,8 +199,7 @@ def setVariable(identifier, num, words):
     if isNumber(identifier):
         print("N#\nSyntaxError: Number cannot be used as an identifier")
         return
-    if words[5]:
-        db = stringProcessing(num, words[5], words)
+    db = stringProcessing(num, words)
     if isVariable(identifier):
         variableData[getVariableIndex(identifier)] = db
     else:
@@ -533,6 +534,6 @@ def stringProcessing(effect, string):
         return "N#\nSyntaxError: Invalid string processing effect"
     
 def join(str1, str2):
-    return str1 + str2
+    return valueStr(str1) + valueStr(str2)
 
 main()
