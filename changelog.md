@@ -17,3 +17,5 @@
 16/12/18: Added string joining
 
 18/12/18: Bug fixing. Added comments
+
+19/12/18: Bug fixing. Code organising
