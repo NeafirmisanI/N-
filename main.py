@@ -125,7 +125,32 @@ def isOperator(string):
     return False
 
 def nPrint(words):
+    if identifyPrint(words):
+        nPrintNormal(words)
+    else:
+        nPrintJoin(words)
+
+def identifyPrint(words): #TODO: Work on this stuff more
     if words[5] != "+":
+        return True
+    return False
+
+def nPrintJoin(words):
+    if not containsVariable(words[2], words[6]):
+        string = join(words[2], words[6])
+    else:
+        string = join(words[2], words[4])
+    validateOperation(words[0], words[1])
+    if isKeyword(words[3]):
+        validateOperation(words[3], words[5])
+    if isVariable(string):
+        print(getVariableData(string))
+    if not containsVariable(words[2], words[6]):
+        print(stringProcessing(words[9], string))
+    else:
+        print(stringProcessing(words[7], string))
+            
+def nPrintNormal(words):
         string = words[2]
         validateOperation(words[0], words[1])
         if isKeyword(words[3]): validateOperation(words[3], words[5])
@@ -139,20 +164,6 @@ def nPrint(words):
             else:
                 print(evaluateFibonancci(string))
         print(stringProcessing(words[5], string))
-    else:
-        string = join(words[2], words[6])
-        validateOperation(words[0], words[1])
-        if isKeyword(words[3]): validateOperation(words[3], words[5])
-        if isVariable(string):
-            print(getVariableData(string))
-        if isMath(words[3]):
-            print(evaluate(words[3], string, words[4]))
-        elif isMathPro(words[3]):
-            if words[3] == "factorial":
-                print(evaluateFactorial(string))
-            else:
-                print(evaluateFibonancci(string))
-        print(stringProcessing(words[7], string))
 
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -535,5 +546,15 @@ def stringProcessing(effect, string):
     
 def join(str1, str2):
     return valueStr(str1) + valueStr(str2)
+
+def isSimilar(str1, str2):
+    if not isNumber(str1) or isNumber(str2):
+        return False
+    return True
+
+def containsVariable(str1, str2):
+    if not isVariable(str1) or isVariable(str2):
+        return False
+    return True
 
 main()
