@@ -1,5 +1,6 @@
 import os
 import datetime
+import math
 
 print ("N# Python Interpreter")
 
@@ -90,7 +91,7 @@ def value(words, index):
         return ""
 
 def validateOperation(operand, operator):
-    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/" or operator == "fibonacci" or operator == "factorial"))
+    validExpression = ((operand == "Log" or operand == "uppercase" or operand == "lowercase" or operand == "camelcase" or operand == "swapcase" or operand == "system") and (operator == "=" or operator == "+" or operator == "-" or operator == "*" or operator == "/" or operator == "add" or operator == "subtract" or operator == "multiply" or operator == "divide" or operator == "plus" or operator == "minus" or operator == "times" or operator == "over" or operator == "fibonacci" or operator == "factorial"))
     
     if not validExpression:
         print("N#\nSyntaxError: Invalid operator \"" + operator + "\" on operand \"" + operand + "'")
@@ -115,6 +116,14 @@ def isOperator(string):
         "-"
         "*",
         "/",
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "plus",
+        "minus",
+        "times",
+        "over",
         "factorial",
         "fibonacci"
     ]
@@ -125,32 +134,7 @@ def isOperator(string):
     return False
 
 def nPrint(words):
-    if identifyPrint(words):
-        nPrintNormal(words)
-    else:
-        nPrintJoin(words)
-
-def identifyPrint(words): #TODO: Work on this stuff more
-    if words[5] != "+":
-        return True
-    return False
-
-def nPrintJoin(words):
-    if not containsVariable(words[2], words[6]):
-        string = join(words[2], words[6])
-    else:
-        string = join(words[2], words[4])
-    validateOperation(words[0], words[1])
-    if isKeyword(words[3]):
-        validateOperation(words[3], words[5])
-    if isVariable(string):
-        print(getVariableData(string))
-    if not containsVariable(words[2], words[6]):
-        print(stringProcessing(words[9], string))
-    else:
-        print(stringProcessing(words[7], string))
-            
-def nPrintNormal(words):
+    if not isToJoin(words):
         string = words[2]
         validateOperation(words[0], words[1])
         if isKeyword(words[3]): validateOperation(words[3], words[5])
@@ -164,7 +148,28 @@ def nPrintNormal(words):
             else:
                 print(evaluateFibonancci(string))
         print(stringProcessing(words[5], string))
+    else:
+        nPrintJoin(words)
 
+def isToJoin(words):
+    if words[5] == "join":
+        return True
+    return False
+
+def nPrintJoin(words):
+    if not containsVariable(words[2], words[6]):
+        string = join(words[2], words[6])
+        validateOperation(words[0], words[1])
+        if isKeyword(words[3]):
+            validateOperation(words[3], words[5])
+        print(stringProcessing(words[9], string))
+    else:
+        string = join(words[2], words[4])
+        validateOperation(words[0], words[1])
+        if isKeyword(words[3]):
+            validateOperation(words[3], words[5])
+        print(stringProcessing(words[7], string))
+        
 def nSystem(words):
     validateOperation(words[0], words[1])
     os.system(value(words, 2))
@@ -250,7 +255,11 @@ variableIdentifiers = [
     "datetime.day.month",
     "datetime.weekday.number",
     "datetime.weekday",
-    "datetime.weekday.short"
+    "datetime.weekday.short",
+    "pi",
+    "tau",
+    "e",
+    "euler"
 ]  
 variableData = [
     datetime.datetime.now().strftime("%c"),
@@ -273,7 +282,11 @@ variableData = [
     datetime.datetime.now().strftime("%d"),
     datetime.datetime.now().strftime("%w"),
     datetime.datetime.now().strftime("%A"),
-    datetime.datetime.now().strftime("%a")
+    datetime.datetime.now().strftime("%a"),
+    math.pi,
+    math.pi * 2,
+    math.e,
+    math.e
 ]
 
 mathOperators = [
@@ -463,11 +476,11 @@ def isMath(operator):
     return False
 
 def evaluate(operator, numo, numt):
-    if operator == "+":
+    if operator == "+" or operator == "add" or operator == "plus":
         return int(numo) + int(numt)
-    elif operator == "-":
+    elif operator == "-" or operator == "subtarct" or operator == "minus":
         return int(numo) - int(numt)
-    elif operator == "*":
+    elif operator == "*" or operator == "multiply" or operator == "times":
         return int(numo) * int(numt)
     else:
         return int(numo) / int(numt)
@@ -524,7 +537,7 @@ def evaluateFibonancci(n):
     elif num == 1: 
         return 1
     else: 
-        return evaluateFibonancci(num-1)+evaluateFibonancci(num-2)
+        return evaluateFibonancci(num-1) + evaluateFibonancci(num-2)
     
 def askForInput():
     inp = input("")
@@ -542,19 +555,21 @@ def stringProcessing(effect, string):
     elif effect == "":
         return string
     else:
-        return "N#\nSyntaxError: Invalid string processing effect"
+        return "\nN#\nSyntaxError: Invalid string processing effect"
     
 def join(str1, str2):
     return valueStr(str1) + valueStr(str2)
 
 def isSimilar(str1, str2):
-    if not isNumber(str1) or isNumber(str2):
-        return False
-    return True
+    if isNumber(value(str1)) and isNumber(value(str2)):
+        return True
+    elif isString(value(str1)) and isString(value(str2)):
+        return True
+    return False
 
 def containsVariable(str1, str2):
-    if not isVariable(str1) or isVariable(str2):
-        return False
-    return True
+    if isVariable(str1) or isVariable(str2):
+        return True
+    return False
 
 main()
