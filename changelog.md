@@ -19,3 +19,5 @@
 18/12/18: Bug fixing. Added comments
 
 19/12/18: Bug fixing. Code organising
+
+20/12/18: Finally fixed all bugs. Added pi, tau and e constants
