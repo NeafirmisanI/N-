@@ -124,6 +124,9 @@ def isOperator(string):
         "minus",
         "times",
         "over",
+        "%",
+        "mod",
+        "modulus",
         "factorial",
         "fibonacci"
     ]
@@ -135,25 +138,34 @@ def isOperator(string):
 
 def nPrint(words):
     if not isToJoin(words):
-        string = words[2]
-        validateOperation(words[0], words[1])
-        if isKeyword(words[3]): validateOperation(words[3], words[5])
-        if isVariable(string):
-            print(getVariableData(string))
-        if isMath(words[3]):
-            print(evaluate(words[3], string, words[4]))
-        elif isMathPro(words[3]):
-            if words[3] == "factorial":
-                print(evaluateFactorial(string))
-            else:
-                print(evaluateFibonancci(string))
-        print(stringProcessing(words[5], string))
+        if bool(runJoin):
+            string = words[2]
+            validateOperation(words[0], words[1])
+            if isKeyword(words[3]): validateOperation(words[3], words[5])
+            if isVariable(string):
+                string = getVariableData(string)
+            if isMath(words[3]):
+                if isBothNumbers(words[3], words[4]):
+                    string = evaluate(words[3], string, words[4])
+                else:
+                    string = "N#\nSyntaxError: Only numbers and variables can be added"
+            elif isMathPro(words[3]):
+                if words[3] == "factorial":
+                    string = evaluateFactorial(string)
+                else:
+                    string = evaluateFibonancci(string)
+            print(stringProcessing(words[5], string))
     else:
         nPrintJoin(words)
 
 def isToJoin(words):
+    global runJoin
+    runJoin = 1
     if words[5] == "join":
         return True
+    elif words[3] == "join":
+        print("N#\nSyntaxError: Numbers cannot be joined")
+        runJoin = 0
     return False
 
 def nPrintJoin(words):
@@ -293,7 +305,20 @@ mathOperators = [
     "+",
     "-",
     "*",
-    "/"
+    "/",
+    "%",
+    "add",
+    "subtract",
+    "multiply",
+    "divide",
+    "plus",
+    "minus",
+    "times",
+    "over",
+    "%",
+    "mod",
+    "modulus",
+    "!"
 ]
 
 mathProperties = [
@@ -482,8 +507,12 @@ def evaluate(operator, numo, numt):
         return int(numo) - int(numt)
     elif operator == "*" or operator == "multiply" or operator == "times":
         return int(numo) * int(numt)
-    else:
+    elif operator == "/" or operator == "divide" or operator == "over":
         return int(numo) / int(numt)
+    elif operator == "!":
+        return evaluateFactorial(numo)
+    else:
+        return int(numo) % int(numt)
     
 def unsplitWords(words):
     string = ""
@@ -555,15 +584,13 @@ def stringProcessing(effect, string):
     elif effect == "":
         return string
     else:
-        return "\nN#\nSyntaxError: Invalid string processing effect"
+        return "N#\nSyntaxError: Invalid string processing effect"
     
 def join(str1, str2):
     return valueStr(str1) + valueStr(str2)
 
-def isSimilar(str1, str2):
+def isBothNumbers(str1, str2):
     if isNumber(value(str1)) and isNumber(value(str2)):
-        return True
-    elif isString(value(str1)) and isString(value(str2)):
         return True
     return False
 
