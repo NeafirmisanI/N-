@@ -23,3 +23,5 @@
 20/12/18: Finally fixed all bugs. Added pi, tau and e constants. Also made it do operations with words
 
 21/12/18: Added modulus function. Also powered error handling
+
+22/12/18: Bug fixing
