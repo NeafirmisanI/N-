@@ -161,26 +161,29 @@ def nPrint(words):
 def isToJoin(words):
     global runJoin
     runJoin = 1
-    if words[5] == "join":
-        return True
-    elif words[3] == "join":
+    value = getLengthOfJoin(words)
+    if value <= 3:
+        return False
         print("N#\nSyntaxError: Numbers cannot be joined")
         runJoin = 0
-    return False
+    else:
+        return True
 
 def nPrintJoin(words):
     if not containsVariable(words[2], words[6]):
-        string = join(words[2], words[6])
+        value = getLengthOfJoin(words)
+        string = join(words[2], words[value+2])
         validateOperation(words[0], words[1])
         if isKeyword(words[3]):
             validateOperation(words[3], words[5])
-        print(stringProcessing(words[9], string))
+        print(stringProcessing(words[value+4], string))
     else:
-        string = join(words[2], words[4])
+        value = getLengthOfJoin(words)
+        string = join(words[2], words[value+1])
         validateOperation(words[0], words[1])
         if isKeyword(words[3]):
             validateOperation(words[3], words[5])
-        print(stringProcessing(words[7], string))
+        print(stringProcessing(words[value+2], string))
         
 def nSystem(words):
     validateOperation(words[0], words[1])
@@ -213,6 +216,14 @@ def executeList(words):
     else:
         value(words, 0)
 
+
+def getLengthOfJoin(words):
+    index = 0
+    for i in words:
+        if words[index] == "join":
+            return index
+        else:
+            index += 1
 
 def assignVariable(identifier, data):
     variableIdentifiers.append(identifier)
