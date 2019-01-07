@@ -10,6 +10,7 @@ def lex(filecontents):
     tok = ""
     string = ""
     state = 0
+    isexpr = 0
     expr = ""
     n = ""
     filecontents = list(filecontents)
@@ -20,18 +21,22 @@ def lex(filecontents):
                 tok = ""
             else:
                 tok = " "
-        elif tok == "\n":
+        elif tok == "\n" or tok == "<EOF>":
             tok = ""
-            if expr != "":
-                print(expr)
+            if expr != "" and isexpr == 1:
+                tokens.append("EXPR:" + expr)
+                expr = ""
+            elif expr != "" and isexpr == 0:
+                tokens.append("NUM:" + expr)
                 expr = ""
         elif tok == "print" or tok == "Print":
             tokens.append("PRINT")
             tok = ""
-        elif tok == "0" or tok == "2" or tok == "3" or tok == "4" or tok == "5" or tok == "6" or tok == "7" or tok == "8" or tok == "9":
+        elif tok in ["1","2","3","4","5","6","7","8","9","0"]:
             expr  += tok
             tok = ""
-        elif tok == "+":
+        elif tok in ["+","-","*","/","(",")"]:
+            isexpr = 1
             expr += tok
             tok = ""
         elif tok == "\"":
@@ -46,14 +51,18 @@ def lex(filecontents):
             string += tok
             tok = ""
     return tokens
-    print(expr)
     #print(tokens)
 
 def parse(toks):
     i = 0
     while(i < len(toks)):
-        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
-            print(toks[i+1][7:])
+        if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
+            if toks[i+1][0:6] == "STRING":
+                print(toks[i+1][7:])
+            elif toks[i+1][0:3] == "NUM":
+                print(toks[i+1][4:])
+            elif toks[i+1][0:4] == "EXPR":
+                print(toks[i+1][5:])
             i += 2
         
 def run():
@@ -61,6 +70,7 @@ def run():
     #data = promptForInput() #For use inside IDE
     n = open("source.txt", "r")
     data = n.read() #For testing
+    data += "<EOF>"
     toks = lex(data)
     parse(toks)
     
