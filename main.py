@@ -53,16 +53,29 @@ def lex(filecontents):
     return tokens
     #print(tokens)
 
+def doPrint(toPrint):
+    if toPrint[0:6] == "STRING":
+        toPrint = toPrint[8:]
+        toPrint = toPrint[:-1]
+    elif toPrint[0:3] == "NUM":
+        toPrint = toPrint[4:]
+    elif toPrint[0:4] == "EXPR":
+        toPrint = evalExpression(toPrint[5:])
+    print(toPrint)
+
+def evalExpression(expr):
+    return eval(expr)
+
 def parse(toks):
     i = 0
     while(i < len(toks)):
         if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING" or toks[i] + " " + toks[i+1][0:3] == "PRINT NUM" or toks[i] + " " + toks[i+1][0:4] == "PRINT EXPR":
             if toks[i+1][0:6] == "STRING":
-                print(toks[i+1][7:])
+                doPrint(toks[i+1])
             elif toks[i+1][0:3] == "NUM":
-                print(toks[i+1][4:])
+                doPrint(toks[i+1])
             elif toks[i+1][0:4] == "EXPR":
-                print(toks[i+1][5:])
+                doPrint(toks[i+1])
             i += 2
         
 def run():
