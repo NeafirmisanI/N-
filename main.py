@@ -10,6 +10,8 @@ def lex(filecontents):
     tok = ""
     string = ""
     state = 0
+    expr = ""
+    n = ""
     filecontents = list(filecontents)
     for char in filecontents:
         tok += char
@@ -20,8 +22,17 @@ def lex(filecontents):
                 tok = " "
         elif tok == "\n":
             tok = ""
-        elif tok == "print":
+            if expr != "":
+                print(expr)
+                expr = ""
+        elif tok == "print" or tok == "Print":
             tokens.append("PRINT")
+            tok = ""
+        elif tok == "0" or tok == "2" or tok == "3" or tok == "4" or tok == "5" or tok == "6" or tok == "7" or tok == "8" or tok == "9":
+            expr  += tok
+            tok = ""
+        elif tok == "+":
+            expr += tok
             tok = ""
         elif tok == "\"":
             if state == 0:
@@ -35,10 +46,10 @@ def lex(filecontents):
             string += tok
             tok = ""
     return tokens
+    print(expr)
     #print(tokens)
 
 def parse(toks):
-    print(toks)
     i = 0
     while(i < len(toks)):
         if toks[i] + " " + toks[i+1][0:6] == "PRINT STRING":
@@ -47,8 +58,13 @@ def parse(toks):
         
 def run():
     #data = open_file(argv[1]) #For console
-    data = 'print "hello world"\nprint "h"'
+    #data = promptForInput() #For use inside IDE
+    n = open("source.txt", "r")
+    data = n.read() #For testing
     toks = lex(data)
     parse(toks)
+    
+def promptForInput():
+    return str(input("> "))
 
 run()
