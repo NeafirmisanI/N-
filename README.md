@@ -6,7 +6,7 @@ N# is a new programming language created to teach beginners to code
 ```
 // FizzBuzz in N#
 
-Log = "Enter an integer"
+print "Enter an integer"
 x = Input
 fizzBuzz {x}
 
@@ -14,9 +14,9 @@ df fizzBuzz {number} (
   a = 0
   while a < number (
     if a % 3 = 0 (
-      Log = "Fizz"
+      print "Fizz"
     ) elif a % 5 = 0 (
-      Log = "Buzz"
+      print "Buzz"
     )
   )
 )
