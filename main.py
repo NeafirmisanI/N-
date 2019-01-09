@@ -1,6 +1,7 @@
 from sys import *
 
 tokens = []
+symbols = {}
 
 def open_file(filename):
     data = open(filename, "r").read()
@@ -35,12 +36,12 @@ def lex(filecontents):
                 tokens.append("VAR:" + var)
                 var = ""
         elif tok == "=" and state == 0:
-            tokens.append("EQUALS")
-            tok = ""
             if var != "":
                 tokens.append("VAR:" + var)
                 var = ""
                 varStarted = 0
+            tokens.append("EQUALS")
+            tok = ""
         elif tok == "var" and state == 0:
             varStarted = 1
             var += tok
@@ -85,6 +86,10 @@ def doPrint(toPrint):
 def evalExpression(expr):
     return eval(expr)
 
+def doAssign(varname, varvalue):
+    name = "$" + varname[7:]
+    symbols[name] = varvalue
+
 def parse(toks):
     i = 0
     while(i < len(toks)):
@@ -96,6 +101,9 @@ def parse(toks):
             elif toks[i+1][0:4] == "EXPR":
                 doPrint(toks[i+1])
             i += 2
+        if toks[i][0:3] + " " + toks[i+1] + " " + toks[i+2][0:6] == "VAR EUALS STRING":
+            doAssign(toks[i], toks[i+2])
+            i += 3
         
 def run():
     #data = open_file(argv[1]) #For console
