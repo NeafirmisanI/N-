@@ -7,7 +7,7 @@ N# is a new programming language created to teach beginners to code
 // FizzBuzz in N#
 
 print "Enter an integer"
-x = Input
+var x = Input
 fizzBuzz {x}
 
 df fizzBuzz {number} (
