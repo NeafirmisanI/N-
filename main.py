@@ -37,8 +37,10 @@ def lex(filecontents):
         elif tok == "=" and state == 0:
             tokens.append("EQUALS")
             tok = ""
-            var = ""
-            varStarted = 0
+            if var != "":
+                tokens.append("VAR:" + var)
+                var = ""
+                varStarted = 0
         elif tok == "var" and state == 0:
             varStarted = 1
             var += tok
