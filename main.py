@@ -55,7 +55,7 @@ def lex(filecontents):
         elif tok in ["1","2","3","4","5","6","7","8","9","0"]:
             expr  += tok
             tok = ""
-        elif tok in ["+","-","*","/","(",")"]:
+        elif tok in ["+","-","*","/","(",")","%"]:
             isexpr = 1
             expr += tok
             tok = ""
