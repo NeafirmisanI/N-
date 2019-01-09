@@ -11,7 +11,7 @@ var x = Input
 fizzBuzz {x}
 
 df fizzBuzz {number} (
-  a = 0
+  var a = 0
   while a < number (
     if a % 3 = 0 (
       print "Fizz"
