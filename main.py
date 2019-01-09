@@ -13,6 +13,7 @@ def lex(filecontents):
     isexpr = 0
     expr = ""
     n = ""
+    varStarted = 0
     filecontents = list(filecontents)
     for char in filecontents:
         tok += char
@@ -29,6 +30,8 @@ def lex(filecontents):
             elif expr != "" and isexpr == 0:
                 tokens.append("NUM:" + expr)
                 expr = ""
+        elif tok == "var" and state == 0:
+            varStarted = 1
         elif tok == "print" or tok == "Print":
             tokens.append("PRINT")
             tok = ""
