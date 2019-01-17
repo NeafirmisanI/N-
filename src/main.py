@@ -108,11 +108,11 @@ def parse(toks):
 def run():
     #data = open_file(argv[1]) #For console
     #data = promptForInput() #For use inside IDE
-    n = open("source.txt", "r")
-    data = n.read() #For testing
-    data += "<EOF>"
-    toks = lex(data)
-    parse(toks)
+    with open("source.txt") as n:
+        data = n.read() #For testing
+        data += "<EOF>"
+        toks = lex(data)
+        parse(toks)
     
 def promptForInput():
     return str(input("> "))
