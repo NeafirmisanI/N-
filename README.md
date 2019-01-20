@@ -1,26 +1,13 @@
-<p align="center">
-N# is a new programming language created to teach beginners to code
-</p>
+# N#
+###### V0.8
+A new programming language created to teach beginners to code and written in Python
 
-## Example
+## Hello World in N#
 ```
-// FizzBuzz in N#
-
-print "Enter an integer"
-var x = Input
-fizzBuzz {x}
-
-df fizzBuzz {number} (
-  var a = 0
-  while a < number (
-    if a % 3 = 0 (
-      print "Fizz"
-    ) elif a % 5 = 0 (
-      print "Buzz"
-    )
-  )
-)
+// This is a comment
+print "Hello World"
 ```
+More in [Examples](/examples)
 
 ## What is N#'s file extension
-N#'s file extension is '.nsharp'
+N#'s file extension is `.nsharp`.
