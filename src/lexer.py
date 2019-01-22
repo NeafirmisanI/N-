@@ -9,18 +9,26 @@ class Lexer(object):
         tokens = []
         source_code = self.source_code.split()
         source_index = 0
+        stringStarted = 0
 
         while source_index < len(source_code):
             word = source_code[source_index]
 
             if word == "var":
                 tokens.append(["VAR_DECLARATION", word])
-            elif re.match("[a-z]", word) or re.match("[A-Z]", word):
-                tokens.append(["IDENTIFIER", word])
+            elif word == "print":
+                tokens.append(["PRINT_STATEMENT", word])
+            elif re.match("[a-z]", word) or re.match("[A-Z]", word) or word[0] == "\"":             
+                if stringStarted == 0:
+                    tokens.append(["STRING", word])
+                else:
+                    tokens.append(["IDENTIFIER", word])
             elif re.match("[0-9]", word):
                 tokens.append(["INTEGER", word])
             elif word in "+-*/=":
                 tokens.append(["OPERATOR", word])
+            elif word[0] == "\"":
+                stringStarted = 1 - stringStarted
 
             source_index += 1
         
