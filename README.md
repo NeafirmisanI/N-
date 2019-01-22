@@ -15,5 +15,5 @@ N#'s file extension is `.nsharp`.
 ## Contributing
 If you want to contribute, read our [Contributing Guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md)
 
-### BonfireScratch
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Owner of this orginisation
+- BonfireScratch
+     - Owner of this orginisation
