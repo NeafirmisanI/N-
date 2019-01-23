@@ -1,5 +1,5 @@
 import lexer
-import parser_
+import interpreter
 
 def main():
     content = ""
@@ -7,8 +7,8 @@ def main():
         content = promptForInput()
         lex = lexer.Lexer(content)
         tokens = lex.tokenize()
-        parse = parser_.Parser(tokens)
-        parse.parse()
+        interpret = interpreter.Parser(tokens)
+        interpret.parse()
 
 def promptForInput():
     return str(input("N# > "))
