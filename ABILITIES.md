@@ -1,1 +1,2 @@
 - Assign variables
+- Print strings and numbers
