@@ -73,5 +73,7 @@ class Parser(object):
             tokens_checked += 1
         
         self.varObj.set_variable(name, operator, value)
+        print("-- ENVIRONMENT --")
+        print(self.varObj.variables)
 
         self.token_index += tokens_checked
