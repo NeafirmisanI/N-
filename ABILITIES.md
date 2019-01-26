@@ -1,2 +1,2 @@
-[x] Assign variables
-[x] Print strings and numbers
+- [x] Assign variables
+- [x] Print strings and numbers
