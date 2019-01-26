@@ -5,22 +5,17 @@ class Lexer(object):
     
     def __init__(self, source_code):
         self.source_code = source_code
-        self.varObj = varObject.VariableObject()
-
+    
     def tokenize(self):
-        vars = self.varObj
         tokens = []
         source_code = self.source_code.split()
         source_index = 0
-        print(vars.variables)
 
         while source_index < len(source_code):
             word = source_code[source_index]
 
             if word == "var":
                 tokens.append(["VAR_DECLARATION", word])
-            elif word in self.varObj.variables:
-                print("VARIABLE")
             elif word == "print":
                 tokens.append(["PRINT_STATEMENT", word])
             elif re.match("[a-z]", word) or re.match("[A-Z]", word) or word[0] in ["\"", "\'"]:
