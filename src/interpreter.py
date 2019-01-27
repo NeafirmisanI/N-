@@ -2,13 +2,13 @@ import varObject
 
 class Parser(object):
 
-    def __init__(self, tokens):
-        self.tokens = tokens
-        self.token_index = 0
+    def __init__(self):
         self.transpiled_code = ""
         self.varObj = varObject.VariableObject()
     
-    def parse(self):
+    def parse(self, tokens):
+        self.tokens = tokens
+        self.token_index = 0
         while self.token_index < len(self.tokens):
             token_type = self.tokens[self.token_index][0]
             token_value = self.tokens[self.token_index][1]
