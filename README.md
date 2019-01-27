@@ -1,6 +1,7 @@
 # N#
 ###### V0.1
 [![license](https://img.shields.io/github/license/N-language/N-.svg?style=flat)](/LICENSE)
+![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/N-language/N-.svg?colorB=brightgreen)](https://github.com/N-language/N-/pulls)
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
