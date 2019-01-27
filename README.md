@@ -4,6 +4,7 @@
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/N-language/N-.svg?colorB=brightgreen)](https://github.com/N-language/N-/pulls)
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
+[![Forks](https://img.shields.io/github/forks/N-language/N-.svg?label=forks&style=flat&colorB=%233B1F2A)](https://github.com/N-language/N-/network/members)
 
 A new programming language created to teach beginners to code and written in Python
 
