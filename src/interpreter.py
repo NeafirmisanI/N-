@@ -59,8 +59,6 @@ class Parser(object):
                 print(token_type)
                 print("N# ERROR: Invalid variable name " + token_value)
                 quit()
-            elif token == 2 and token_type == "OPERATOR":
-                operator = token_value
             elif token == 2 and token_type != "OPERATOR":
                 print("N# ERROR: Invalid or missing assignment operator")
                 quit()
@@ -72,8 +70,7 @@ class Parser(object):
 
             tokens_checked += 1
         
-        self.varObj.set_variable(name, operator, value)
-        print("-- ENVIRONMENT --")
+        self.varObj.set_variable(name, value)
+        print("INTER")
         print(self.varObj.variables)
-
         self.token_index += tokens_checked
