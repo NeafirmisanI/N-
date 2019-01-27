@@ -4,6 +4,7 @@ import interpreter
 interpret = interpreter.Parser()
 
 def main():
+    print("N# Shell")
     content = ""
     while True:
         content = promptForInput()
