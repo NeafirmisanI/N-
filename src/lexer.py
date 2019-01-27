@@ -34,6 +34,5 @@ class Lexer(object):
             source_index += 1
         
         #print(tokens)
-        print("LEX")
-        print(self.varObj.variables)
+        
         return tokens
