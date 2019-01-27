@@ -71,6 +71,4 @@ class Parser(object):
             tokens_checked += 1
         
         self.varObj.set_variable(name, value)
-        print("INTER")
-        print(self.varObj.variables)
         self.token_index += tokens_checked
