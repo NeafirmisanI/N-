@@ -1,7 +1,7 @@
 # N#
 ###### V0.1
 [![license](https://img.shields.io/github/license/N-language/N-.svg?style=flat)](/LICENSE)
-![Amount of Languages](https://img.shields.io/github/languages/count/N-language/N-.svg?colorB=orange)](https://github.com/SN--language/N-)
+![Amount of Languages](https://img.shields.io/github/languages/count/N-language/N-.svg?colorB=orange)](https://github.com/N-language/N-)
 ![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
 [![Pull Requests](https://img.shields.io/github/issues-pr/N-language/N-.svg?colorB=brightgreen)](https://github.com/N-language/N-/pulls)
