@@ -83,5 +83,5 @@ class Parser(object):
             tokens_checked += 1
         
         self.varObj.set_variable(name, value)
-        print(self.varObj.variables)
+        #print(self.varObj.variables)
         self.token_index += tokens_checked
