@@ -1,2 +1,3 @@
 - [x] Assign variables
-- [x] Print strings and numbers
+- [x] Retrieve variables
+- [x] Print strings, variables and numbers
