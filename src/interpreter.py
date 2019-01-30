@@ -14,12 +14,17 @@ class Parser(object):
             token_value = self.tokens[self.token_index][1]
             
             if token_type == "VAR_DECLARATION" and token_value == "var":
-                if token_value not in self.varObj.variables:
+                advance_val = self.tokens[self.token_index + 1][1]
+                if advance_val not in self.varObj.variables:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 0)
                 else:
-                    print("N# ERROR: Variable already referenced")
-            elif token_type == "IDENTIFIER" and token_value in self.varObj.variables:
-                self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
+                    print("N# ERROR: Variable " + advance_val + " already referenced")
+                    quit()
+            elif token_type == "IDENTIFIER":
+                if token_value in self.varObj.variables:
+                    self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
+                else:
+                    print("N# ERROR: Undefined variable " + token_value)
             elif token_type == "PRINT_STATEMENT" and token_value == "print":
                 self.parsePrintStatement(self.tokens[self.token_index:len(self.tokens)])
             self.token_index += 1
