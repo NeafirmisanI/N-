@@ -66,7 +66,11 @@ class Parser(object):
             token_value = token_stream[tokens_checked][1]
 
             if token == 1 and token_type == "IDENTIFIER":
-                name = token_value
+                if token_value not in ["pi", "euler", "os", "os-version", "argv", "cwd"]:
+                    name = token_value
+                else:
+                    print("N# ERROR: Cannot change value of static variable " + token_value)
+                    quit()
             elif token == 1 and token_type != "IDENTIFIER":
                 print("N# ERROR: Invalid variable name " + token_value)
                 quit()
