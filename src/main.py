@@ -18,7 +18,7 @@ def promptForInput():
         run(content)
 
 def run(code):
-     lex = lexer.Lexer(content)
+     lex = lexer.Lexer(code)
      tokens = lex.tokenize()
      interpret.parse(tokens)
 
