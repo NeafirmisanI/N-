@@ -1,6 +1,7 @@
+import sys
 import lexer
 import interpreter
-import sys
+from error import NSError
 
 interpret = interpreter.Parser()
 
@@ -11,11 +12,23 @@ def main():
         promptForInput()
     elif len(sys.argv) == 2:
         openFile(sys.argv[1])
+    else:
+        raise RuntimeError("Usage: N# [filename]")
 
 def promptForInput():
      while True:
         content = str(input("N# > "))
-        run(content)
+        try:
+            run(content)
+        except NSError as error:
+            print(error)
+            print()
+        except KeyboardInterrupt:
+            print("\nQuitting...")
+            sys.exit(1)
+        except:
+            print("Internal error, raising exception:")
+            raise
 
 def run(code):
      lex = lexer.Lexer(code)
@@ -24,6 +37,11 @@ def run(code):
 
 def openFile(name):
      with open(name, "r") as sourceFile:
-        run(sourceFile.read())
+        try:
+            run(sourceFile.read())
+        except NSError as Error:
+            print(Error)
+            print()
+            sys.exit(1)
 
 main()
