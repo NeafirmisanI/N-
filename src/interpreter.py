@@ -1,4 +1,5 @@
 import varObject
+from error import NSError
 
 class Parser(object):
 
@@ -18,13 +19,12 @@ class Parser(object):
                 if advance_val not in self.varObj.variables:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 0)
                 else:
-                    print("N# ERROR: Variable " + advance_val + " already referenced")
-                    quit()
+                    raise NSError("N# ERROR: Variable " + advance_val + " already referenced")
             elif token_type == "IDENTIFIER":
                 if token_value in self.varObj.variables:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
                 else:
-                    print("N# ERROR: Undefined variable " + token_value)
+                    raise NSError("N# ERROR: Undefined variable " + token_value)
             elif token_type == "PRINT_STATEMENT" and token_value == "print":
                 self.parsePrintStatement(self.tokens[self.token_index:len(self.tokens)])
             self.token_index += 1
@@ -45,8 +45,7 @@ class Parser(object):
             elif token == 1 and token_type == "IDENTIFIER" and token_value in self.varObj.variables:
                 toPrint = self.varObj.get_variable(token_value)
             elif token == 1 and token_type not in ["STRING", "INTEGER", "IDENTIFIER"]:
-                print("N# ERROR: Invalid printing value")
-                quit()
+                raise NSError("N# ERROR: Invalid printing value")
 
             tokens_checked += 1
         
@@ -69,25 +68,20 @@ class Parser(object):
                 if token_value not in ["pi", "euler", "os", "os-version", "argv", "cwd"]:
                     name = token_value
                 else:
-                    print("N# ERROR: Cannot change value of static variable " + token_value)
-                    quit()
+                    raise NSError("N# ERROR: Cannot change value of static variable " + token_value)
             elif token == 1 and token_type != "IDENTIFIER":
-                print("N# ERROR: Invalid variable name " + token_value)
-                quit()
+                raise NSError("N# ERROR: Invalid variable name " + token_value)
             elif token == 2 and token_type != "OPERATOR":
-                print("N# ERROR: Invalid or missing assignment operator")
-                quit()
+                raise NSError("N# ERROR: Invalid or missing assignment operator")
             elif token == 3 and token_type in ["STRING", "INTEGER", "IDENTIFIER"]:
                 if token_stream == "IDENTIFIER" and token_value in self.varObj.variables:
-                    print("N# ERROR: Variable not referenced")
-                    quit()
+                    raise NSError("N# ERROR: Variable not referenced")
                 elif token_type == "IDENTIFIER":
                     value = self.varObj.get_variable(token_value)
                 else:
                     value = token_value
             elif token == 3 and token_type not in ["STRING", "INTEGER"]:
-                print("N# ERROR: Invalid variable assignment value " + token_type)
-                quit()
+                raise NSError("N# ERROR: Invalid variable assignment value " + token_type)
 
             tokens_checked += 1
         
