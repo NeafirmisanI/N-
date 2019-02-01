@@ -3,12 +3,12 @@ import lexer
 import interpreter
 from error import NSError
 
-interpret = interpreter.Parser()
+interpret = interpreter.Interpreter()
 
 def main():
-    print("N# Shell")
     content = ""
     if len(sys.argv) == 1:
+        print("N# Shell")
         promptForInput()
     elif len(sys.argv) == 2:
         openFile(sys.argv[1])
@@ -22,7 +22,6 @@ def promptForInput():
             run(content)
         except NSError as error:
             print(error)
-            print()
         except KeyboardInterrupt:
             print("\nQuitting...")
             sys.exit(1)
