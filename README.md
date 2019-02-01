@@ -8,6 +8,7 @@
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
 [![Forks](https://img.shields.io/github/forks/N-language/N-.svg?label=forks&style=flat&colorB=%233B1F2A)](https://github.com/N-language/N-/network/members)
 [![Contributors](https://img.shields.io/github/contributors/N-language/N-.svg?colorB=black)](https://github.com/N-language/N-/contributors)
+[![Hosted on Github](https://img.shields.io/badge/hosted%20on-github-black.svg?logo=github)](https://githyub.com/solar-language)
 
 A new C-style programming language created to teach beginners to code, heavilly influenced by JavaScript and Python and written in Python
 <p>Hosted on <a href="https://github.com/N-language"><img src="https://github.com/fluidicon.png" width="20px" height="20px" alt="Github"></a>.<p>
