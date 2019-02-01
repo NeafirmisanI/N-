@@ -9,7 +9,7 @@
 [![Forks](https://img.shields.io/github/forks/N-language/N-.svg?label=forks&style=flat&colorB=%233B1F2A)](https://github.com/N-language/N-/network/members)
 [![Contributors](https://img.shields.io/github/contributors/N-language/N-.svg?colorB=black)](https://github.com/N-language/N-/contributors)
 
-A new programming language created to teach beginners to code and written in Python
+A new C-style programming language created to teach beginners to code, heavilly influenced by JavaScript and Python and written in Python
 <p>Hosted on <a href="https://github.com/N-language"><img src="https://github.com/fluidicon.png" width="20px" height="20px" alt="Github"></a>.<p>
 
 ## Hello World in N#
