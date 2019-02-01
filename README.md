@@ -4,9 +4,7 @@
 ![Amount of Languages](https://img.shields.io/github/languages/count/N-language/N-.svg?colorB=orange)
 ![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/N-language/N-.svg?colorB=brightgreen)](https://github.com/N-language/N-/pulls)
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
-[![Forks](https://img.shields.io/github/forks/N-language/N-.svg?label=forks&style=flat&colorB=%233B1F2A)](https://github.com/N-language/N-/network/members)
 [![Contributors](https://img.shields.io/github/contributors/N-language/N-.svg?colorB=black)](https://github.com/N-language/N-/contributors)
 [![Hosted on Github](https://img.shields.io/badge/hosted%20on-github-black.svg?logo=github)](https://githyub.com/solar-language)
 
