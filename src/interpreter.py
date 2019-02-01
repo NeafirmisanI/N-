@@ -1,7 +1,7 @@
 import varObject
 from error import NSError
 
-class Parser(object):
+class Interpreter(object):
 
     def __init__(self):
         self.transpiled_code = ""
@@ -72,7 +72,14 @@ class Parser(object):
             elif token == 1 and token_type != "IDENTIFIER":
                 raise NSError("N# ERROR: Invalid variable name " + token_value)
             elif token == 2 and token_type != "OPERATOR":
-                raise NSError("N# ERROR: Invalid or missing assignment operator")
+                try:
+                    advance_val = token_stream[tokens_checked + 1][1]
+                except IndexError:
+                    advance_val = token_value
+                if advance_val != token_value:
+                    raise NSError("N# ERROR: Missing assignment operator")
+                else:
+                    value = ""
             elif token == 3 and token_type in ["STRING", "INTEGER", "IDENTIFIER"]:
                 if token_stream == "IDENTIFIER" and token_value in self.varObj.variables:
                     raise NSError("N# ERROR: Variable not referenced")
