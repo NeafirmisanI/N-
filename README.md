@@ -10,8 +10,7 @@
 [![Contributors](https://img.shields.io/github/contributors/N-language/N-.svg?colorB=black)](https://github.com/N-language/N-/contributors)
 [![Hosted on Github](https://img.shields.io/badge/hosted%20on-github-black.svg?logo=github)](https://githyub.com/solar-language)
 
-A new C-style programming language created to teach beginners to code, heavilly influenced by JavaScript and Python and written in Python
-<p>Hosted on <a href="https://github.com/N-language"><img src="https://github.com/fluidicon.png" width="20px" height="20px" alt="Github"></a>.<p>
+A new C-style programming language created to teach beginners to code, heavilly influenced by JavaScript and written in Python
 
 ## Hello World in N#
 ```
