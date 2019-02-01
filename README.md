@@ -1,5 +1,6 @@
 # N#
 ###### V0.1
+[![Version](https://img.shields.io/badge/endpoint.svg?url=https://raw.githubusercontent.com/N-language/N-/master/VERSION.json)](/version.json)
 ![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
 [![Languages](https://img.shields.io/badge/python-100.0%25-blue.svg)](/src)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
