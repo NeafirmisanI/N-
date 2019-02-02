@@ -14,7 +14,7 @@ There are a few different ways of helping in N#.
 If you find a bug in N#, then open an issue using the **Bug Report** Template and give as much information as you can.
 
 #### Requesting Features ####
-If you want something new to come in the next version of N#, open an issue using the **Feature request** template. Remember, your suggestion might not become part of N#.
+If you want something new to come in the next version of N#, open an issue using the **Feature request** template. Remember, your suggestion might not be implemented in N#.
 
 #### Writing Code ####
 If you know Python and want to help, then feel free to create a pull request, again though, your code may or may not be used in N#.
