@@ -1,33 +1,22 @@
-import re
+#HOUSTON, WE HAVE A PROBLEM HERE!
+
+DIGITS = ["0123456789"]
+ALPHABET = ["QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm"]
 
 class Lexer(object):
     
-    def __init__(self, source_code):
-        self.source_code = source_code
+    def __init__(self, text):
+        self.text = text
+        self.pos = -1
+        self.current_char = None
+        self.advance()
+
+    def advance(self):
+        self.pos += 1
+        try:
+            self.current_char = self.text[self.pos]
+        except IndexError:
+            self.current_char = None
     
     def tokenize(self):
-        tokens = []
-        source_code = self.source_code.split()
-        source_index = 0
-
-        while source_index < len(source_code):
-            word = source_code[source_index]
-
-            if word == "var":
-                tokens.append(["VAR_DECLARATION", word])
-            elif word == "print":
-                tokens.append(["PRINT_STATEMENT", word])
-            elif re.match("[a-z]", word) or re.match("[A-Z]", word) or word[0] in ["\"", "\'"]:
-                if word[0] in ["\"", "\'"]:
-                    tokens.append(["STRING", word])
-                else:
-                    tokens.append(["IDENTIFIER", word])
-            elif re.match("[0-9]", word):
-                tokens.append(["INTEGER", word])
-            elif word in "+-*/=":
-                tokens.append(["OPERATOR", word])
-
-            source_index += 1
-        
-        #print(tokens)
-        return tokens
+        #TODO: Update because it sucked
