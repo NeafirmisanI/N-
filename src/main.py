@@ -40,7 +40,6 @@ def openFile(name):
             run(sourceFile.read())
         except NSError as Error:
             print(Error)
-            print()
             sys.exit(1)
 
 main()
