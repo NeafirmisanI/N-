@@ -40,11 +40,11 @@ class Interpreter(object):
 
             if token == 1 and token_type == "STRING":
                 toPrint = token_value[1:-1]
-            elif token == 1 and token_type == "INTEGER":
+            elif token == 1 and token_type in ["FLOAT", "INT"]:
                 toPrint = token_value
             elif token == 1 and token_type == "IDENTIFIER" and token_value in self.varObj.variables:
                 toPrint = self.varObj.get_variable(token_value)
-            elif token == 1 and token_type not in ["STRING", "INTEGER", "IDENTIFIER"]:
+            elif token == 1 and token_type not in ["STRING", "FLOAT", "INT", "IDENTIFIER"]:
                 raise NSError("N# ERROR: Invalid printing value")
 
             tokens_checked += 1
@@ -80,14 +80,14 @@ class Interpreter(object):
                     raise NSError("N# ERROR: Missing assignment operator")
                 else:
                     value = ""
-            elif token == 3 and token_type in ["STRING", "INTEGER", "IDENTIFIER"]:
+            elif token == 3 and token_type in ["STRING", "FLOAT", "INT", "IDENTIFIER"]:
                 if token_stream == "IDENTIFIER" and token_value in self.varObj.variables:
                     raise NSError("N# ERROR: Variable not referenced")
                 elif token_type == "IDENTIFIER":
                     value = self.varObj.get_variable(token_value)
                 else:
                     value = token_value
-            elif token == 3 and token_type not in ["STRING", "INTEGER"]:
+            elif token == 3 and token_type not in ["STRING", "FLOAT", "INT"]:
                 raise NSError("N# ERROR: Invalid variable assignment value " + token_type)
 
             tokens_checked += 1
