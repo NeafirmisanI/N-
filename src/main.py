@@ -1,9 +1,9 @@
 import sys
-import lexer
-import interpreter
+from lexer import Lexer
+from interpreter import Interpreter
 from error import NSError
 
-interpret = interpreter.Interpreter()
+interpreter = Interpreter()
 
 def main():
     content = ""
@@ -30,9 +30,10 @@ def promptForInput():
             raise
 
 def run(code):
-     lex = lexer.Lexer(code)
-     tokens = lex.tokenize()
-     interpret.parse(tokens)
+     global interpreter 
+     tokens = Lexer().lex(code)
+     #print(tokens)
+     interpreter.interpret(tokens)
 
 def openFile(name):
      with open(name, "r") as sourceFile:
