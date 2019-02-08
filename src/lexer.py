@@ -4,7 +4,7 @@ import string
 class Lexer:
 
     def __init__(self):
-        self.tokens= []
+        self.tokens = []
         self.code = ""
         self.pos = 0
         self.digits = "0123456789"
