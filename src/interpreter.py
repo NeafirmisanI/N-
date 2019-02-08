@@ -22,7 +22,7 @@ class Interpreter:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 0)
                 else:
                     raise NSError("Uncaught ReferenceError: Variable " + advance_val + " already referenced")
-            elif token_type == "IDENTIFIER":
+            elif token_type == "IDENTIFIER" and token_value not in ["print", "var"]:
                 if token_value in self.varObj.variables:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
                 else:
@@ -37,8 +37,9 @@ class Interpreter:
         toPrint = ""
 
         for token in range(0, len(token_stream)):
-            token_type = token_stream[tokens_checked][0]
-            token_value = token_stream[tokens_checked][1]
+            token_i = self.tokens[tokens_checked]
+            token_type = token_i["type"]
+            token_value = token_i["value"]
 
             if token == 1 and token_type == "STRING":
                 toPrint = token_value[1:-1]
@@ -63,11 +64,9 @@ class Interpreter:
         value = ""
 
         for token in range(index, len(token_stream) + index):
-            token = self.tokens[self.token_index]
-            token_type = token["type"]
-            token_value = token["value"]
-            print(token_type) #TODO: Fix error
-            print(token_value)
+            token_i = self.tokens[tokens_checked]
+            token_type = token_i["type"]
+            token_value = token_i["value"]
 
             if token == 1 and token_type == "IDENTIFIER":
                 if token_value not in ["pi", "euler", "os", "os-version", "argv", "cwd"]:
@@ -81,13 +80,14 @@ class Interpreter:
                     raise NSError("Uncaught SyntaxError: Unexpected number")
             elif token == 2 and token_type != "OPERATOR":
                 try:
-                    advance_val = token_stream[tokens_checked + 1][1]
+                    token_advance = self.tokens[tokens_checked]
+                    advance_val = token_advance["value"]
                 except IndexError:
                     advance_val = token_value
                 if advance_val != token_value:
                     raise NSError("Uncaught SyntaxError: Missing assignment operator")
                 else:
-                    value = ""
+                    value = "undefined"
             elif token == 3 and token_type in ["STRING", "NUMBER", "IDENTIFIER"]:
                 if token_stream == "IDENTIFIER" and token_value in self.varObj.variables:
                     raise NSError("Uncaught ReferenceError: " + token_value + " is not defined")
@@ -101,5 +101,5 @@ class Interpreter:
             tokens_checked += 1
         
         self.varObj.set_variable(name, value)
-        print(self.varObj.variables)
+        #print(self.varObj.variables)
         self.token_index += tokens_checked
