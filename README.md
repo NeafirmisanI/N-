@@ -20,7 +20,7 @@ More in [Examples](/examples)
 N#'s file extension is `.nsharp`.
 
 ## What can N# do
-N# is NOT complete, instead it is under a rewrite, so it's expected to have more abilities in the future. If you want to see what it can currently do, head over to the [Abilities file](ABILITIES.md).
+N# is NOT complete, instead it is under a rewrite, so it's expected to have more abilities in the future. If you want to see what it can currently do, head over to the [Features file](ABILITIES.md).
 
 ## Contributing
 If you want to contribute, read our [Contributing Guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
