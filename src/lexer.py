@@ -22,7 +22,7 @@ class Lexer:
                 "$+-/*%=><!^"
             )
 
-            if char in "+-*/=":
+            if char in "+-*/=()":
                 self.addToken("OPERATOR", char)
                 continue
             if char in '\'\"':
