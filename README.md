@@ -10,7 +10,7 @@
 A new C-style programming language designed for beginners and written in Python
 
 ## Hello World in N#
-``` python
+```python
 // This is a comment
 print "Hello World"
 ```
