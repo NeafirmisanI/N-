@@ -11,7 +11,7 @@ A new C-style programming language designed for beginners and written in Python
 
 ## Hello World in N#
 ```python
-// `This is a comment`
+# This is a comment #
 print "Hello World"
 ```
 More in [Examples](/examples)
