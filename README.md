@@ -23,7 +23,7 @@ N#'s file extension is `.nsharp`.
 N# is NOT complete, instead it is under a rewrite, so it's expected to have more abilities in the future. If you want to see what it can currently do, head over to the [Abilities file](ABILITIES.md).
 
 ## Contributing
-If you want to contribute, read our [Contributing Guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md)
+If you want to contribute, read our [Contributing Guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
 Large thanks goes to the Citrus Team as well
 
 - BonfireScratch
