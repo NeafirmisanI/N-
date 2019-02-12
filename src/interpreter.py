@@ -8,6 +8,8 @@ class Interpreter:
         self.varObj = varObject.VariableObject()
         self.tokens = []
         self.stringProc = ["lowercase", "uppercase", "camelcase", "swapcase"]
+        self.keywords = ["var", "print", "browse"]
+        self.staticVars = ["pi", "euler", "os", "os-version", "argv", "cwd", "tau"]
     
     def interpret(self, tokens):
         self.tokens = tokens
@@ -24,7 +26,7 @@ class Interpreter:
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 0)
                 else:
                     raise NSError("Uncaught ReferenceError: Variable " + advance_val + " already referenced")
-            elif token_type == "IDENTIFIER" and token_value not in ["print", "var", "browse"]:
+            elif token_type == "IDENTIFIER" and token_value not in self.keywords:
                 if self.isVariable(token_value):
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
                 else:
@@ -42,7 +44,10 @@ class Interpreter:
         if token_type == "STRING":
             webbrowser.open_new_tab(token_value)
         else:
-            raise NSError("Uncaught SyntaxError: Unexpected identifier")
+            if token_type == "IDENTIFIER":
+                raise NSError("Uncaught SyntaxError: Unexpected identifier")
+            else:
+                raise NSError("Uncaught SyntaxError: Unexpected number")
 
     def parsePrintStatement(self, token_stream):
         tokens_checked = 0
@@ -92,7 +97,7 @@ class Interpreter:
             token_value = token_i["value"]
 
             if token == 1 and token_type == "IDENTIFIER":
-                if token_value not in ["pi", "euler", "os", "os-version", "argv", "cwd", "tau"]:
+                if token_value not in self.staticVars:
                     name = token_value
                 else:
                     raise NSError("Uncaught SyntaxError: Cannot change value of static variable " + token_value)
