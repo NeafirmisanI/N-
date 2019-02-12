@@ -7,6 +7,7 @@ class Interpreter:
     def __init__(self):
         self.varObj = varObject.VariableObject()
         self.tokens = []
+        self.stringProc = ["lowercase", "uppercase", "camelcase", "swapcase"]
     
     def interpret(self, tokens):
         self.tokens = tokens
@@ -24,7 +25,7 @@ class Interpreter:
                 else:
                     raise NSError("Uncaught ReferenceError: Variable " + advance_val + " already referenced")
             elif token_type == "IDENTIFIER" and token_value not in ["print", "var", "browse"]:
-                if token_value in self.varObj.variables:
+                if self.isVariable(token_value):
                     self.parseVariableDeclaration(self.tokens[self.token_index:len(self.tokens)], 1)
                 else:
                     raise NSError("Uncaught ReferenceError: Undefined variable " + token_value)
@@ -37,7 +38,11 @@ class Interpreter:
     def parseBrowseDeclaration(self, token_stream):
         token = self.tokens[1]
         token_value = token["value"]
-        webbrowser.open_new_tab(token_value)
+        token_type = token["type"]
+        if token_type == "STRING":
+            webbrowser.open_new_tab(token_value)
+        else:
+            raise NSError("Uncaught SyntaxError: Unexpected identifier")
 
     def parsePrintStatement(self, token_stream):
         tokens_checked = 0
@@ -55,29 +60,17 @@ class Interpreter:
                 toPrint = token_value
             elif token == 1 and token_type == "NUMBER":
                 toPrint = token_value
-            elif token == 1 and token_type == "IDENTIFIER" and token_value in self.varObj.variables:
+            elif token == 1 and token_type == "IDENTIFIER" and self.isVariable(token_value):
                 toPrint = self.varObj.get_variable(token_value)
-            elif token == 2 and token_type == "IDENTIFIER" and token_value in ["uppercase", "lowercase", "camelcae", "swapcase"]:
+            elif token == 2 and token_type == "IDENTIFIER" and token_value in self.stringProc:
                 if token_value == "lowercase":
-                    try:
-                        toPrint = toPrint.casefold()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'lowercase'")
-                if token_value == "uppercase":
-                    try:
-                        toPrint = toPrint.upper()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'uppercase'")
-                if token_value == "camelcase":
-                    try:
-                        toPrint = toPrint.capitalize()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'camelase'")
+                    toPrint = self.convertToLowercase(toPrint)
+                elif token_value == "uppercase":
+                    toPrint = self.convertToUppercase(toPrint)
+                elif token_value == "camelcase":
+                    toPrint = self.convertToCamelcase(toPrint)
                 if token_value == "swapcase":
-                    try:
-                        toPrint = toPrint.swapcase()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'swapcase'")
+                    toPrint = self.convertToSwapcase(toPrint)
             elif token == 1 and token_type not in ["STRING", "NUMBER", "IDENTIFIER"]:
                 raise NSError("Uncaught ReferenceError: " + token_value + " is not defined")
 
@@ -128,32 +121,19 @@ class Interpreter:
                     value = token_value
             elif token == 3 and token_type not in ["STRING", "NUMBER"]:
                 raise NSError("Uncaught SyntaxError: Invalid variable assignment value " + token_type)
-            elif token == 4 and token_type == "IDENTIFIER" and token_value in ["uppercase", "lowercase", "camelcae", "swapcase"]:
+            elif token == 4 and token_type == "IDENTIFIER" and token_value in self.stringProc:
                 if token_value == "lowercase":
-                    try:
-                        value = value.casefold()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'lowercase'")
-                if token_value == "uppercase":
-                    try:
-                        value = value.upper()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'uppercase'")
-                if token_value == "camelcase":
-                    try:
-                        value = value.capitalize()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'camelase'")
+                    value = self.convertToLowercase(value)
+                elif token_value == "uppercase":
+                    value = self.convertToUppercase(value)
+                elif token_value == "camelcase":
+                    value = self.convertToCamelcase(value)
                 if token_value == "swapcase":
-                    try:
-                        value = value.swapcase()
-                    except AttributeError:
-                        raise NSError("Uncaught SyntaxError: Number object has no attribute 'swapcase'")
+                    value = self.convertToSwapcase(value)
 
             tokens_checked += 1
         
         self.varObj.set_variable(name, value)
-        #print(self.varObj.variables)
         self.token_index += tokens_checked
 
     def parseInputDeclaration(self, token):
@@ -176,3 +156,34 @@ class Interpreter:
             value = str(input(""))
 
         return value
+
+    def isVariable(self, name):
+        return name in self.varObj.variables
+    
+    def convertToLowercase(self, string):
+        try:
+            return string.casefold()
+        except AttributeError:
+            raise NSError("Uncaught SyntaxError: Object has no attribute 'lowercase'")
+            return
+
+    def convertToUppercase(self, string):
+        try:
+            return string.upper()
+        except AttributeError:
+            raise NSError("Uncaught SyntaxError: Object has no attribute 'uppercase'")
+            return
+
+    def convertToSwapcase(self, string):
+        try:
+            return string.swapcase()
+        except AttributeError:
+            raise NSError("Uncaught SyntaxError: Object has no attribute 'swapcase'")
+            return
+
+    def convertToCamelcase(self, string):
+        try:
+            return string.title()
+        except AttributeError:
+            raise NSError("Uncaught SyntaxError: Object has no attribute 'camelcase'")
+            return
