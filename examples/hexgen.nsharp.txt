@@ -1,0 +1,15 @@
+# Defines the alien function "GenHex". #
+def "GenHex"
+
+# All the variables for hex parts. #
+
+   hex1 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+   hex2 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+   hex3 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+   hex4 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+   hex5 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+   hex6 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
+# Sets fullhex to # joined with the hex variables.
+   fullhex = "#" hex1 + hex2 + hex3 + hex4 + hex5 + hex6
+# Prints output.
+   print "Your generated hex color is " + fullhex
