@@ -1,2 +1,5 @@
-var sampleVar = "sample variable text"
-print sampleVar
+var x = "4"
+var y = "4"
+var z = y + x
+
+print z
