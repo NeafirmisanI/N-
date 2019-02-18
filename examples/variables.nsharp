@@ -1,5 +1,8 @@
+# Sets the variable "x" and "y" as 4 - "var" always goes before a variable, so that N# can recognize that it's a variable rather than an unknown
+# function or self-defined function.
 var x = "4"
 var y = "4"
+# Adds the variables "x" and "y" together. 
 var z = y + x
-
+# Prints the variable "z" to display output.
 print z
