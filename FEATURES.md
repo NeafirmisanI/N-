@@ -2,4 +2,4 @@
 - [x] Printing strings, variables and numbers
 - [x] Getting user input
 - [x] Openning URLs
-- [x] Build-in string methods
+- [x] Built-in string methods
