@@ -10,7 +10,7 @@ def "GenHex"() {
    hex5 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
    hex6 = "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F",
    # Sets fullhex to # joined with the hex variables.
-   fullhex = "#" hex1 + hex2 + hex3 + hex4 + hex5 + hex6
+   fullhex = "#" + hex1 + hex2 + hex3 + hex4 + hex5 + hex6
    # Prints output.
    print "Your generated hex color is " + fullhex
 }
