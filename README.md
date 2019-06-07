@@ -6,6 +6,7 @@
 [![license](https://img.shields.io/github/license/N-language/N-.svg?style=flat)](/LICENSE.md)
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
 [![Hosted on Github](https://img.shields.io/badge/hosted%20on-github-black.svg?logo=github)](https://github.com/Ν-language)
+![Codefactor]()
 
 A new C-style programming language designed for beginners and written in Python
 
