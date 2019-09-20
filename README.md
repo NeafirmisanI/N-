@@ -1,13 +1,13 @@
 # N#
 [![Version](https://img.shields.io/badge/version-0.1-lightgrey.svg)](/version.json)
 ![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
-[![Languages](https://img.shields.io/badge/python-100.0%25-blue.svg)](/src)
+[![Languages](https://img.shields.io/badge/C++-100.0%25-purple.svg)](/src)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
 [![license](https://img.shields.io/github/license/N-language/N-.svg?style=flat)](/LICENSE.md)
 [![Stars](https://img.shields.io/github/stars/N-language/N-.svg?label=stars&style=flat&colorB=%2355DDC0)](https://github.com/N-language/N-/stargazers)
 [![Hosted on Github](https://img.shields.io/badge/hosted%20on-github-black.svg?logo=github)](https://github.com/Ν-language)
 
-A new C-style programming language designed for beginners and written in Python
+A new C-style programming language designed for beginners and written in C++
 
 ## Hello World in N#
 ```python
