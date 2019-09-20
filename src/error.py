@@ -1,2 +1,0 @@
-class NSError(RuntimeError):
-    pass
