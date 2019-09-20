@@ -1,1 +1,1 @@
-python \src\main.py %*
+g++ src/main.cpp -o main
