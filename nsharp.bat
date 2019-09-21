@@ -1,1 +1,1 @@
-g++ src/main.cpp -o main
+g++ -o main src/main.cpp src/lexer.cpp
