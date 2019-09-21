@@ -1,5 +1,1 @@
-- [x] Assigning variables
-- [x] Printing strings, variables and numbers
-- [x] Getting user input
-- [x] Opening URLs
-- [x] Built-in string methods
+As N# is currently being re-written in C++, no features are available yet.
