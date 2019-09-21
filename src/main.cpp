@@ -2,11 +2,14 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
+#include "lexer.hpp"
 
 using namespace std;
 
 void run(string code) {
-	cout << code;
+	Lexer lexer(code);
+
+	lexer.lex();
 }
 
 void runRepl() {
@@ -17,7 +20,8 @@ void runRepl() {
 	
 	while (1) {
 		cout << "N# > ";
-		cin >> input;
+		getline(cin, input);
+		input += "\n";
 		run(input);
 		cout << "\n";
 	}
@@ -35,6 +39,7 @@ void readFile(char* filename) {
 		}
 		
 		file.close();
+		text += "\n";
 		run(text);
 	} else {
 		cout << "Cannot open file " << filename;
