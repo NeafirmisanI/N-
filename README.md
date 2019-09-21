@@ -24,7 +24,7 @@ N# is NOT complete, instead it is under a rewrite, so it's expected to have more
 
 ## Contributing
 If you want to contribute, read our [Contributing Guidelines](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).
-Large thanks goes to the Citrus Team as well!
+Large thanks goes to @munificent for his book in programming languages in Java and C, and @rspivak for his tutorial in Python, both of which helped us largely.
 
 #
 
