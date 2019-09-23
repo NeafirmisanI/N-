@@ -1,5 +1,5 @@
 # N#
-[![Version](https://img.shields.io/badge/version-0.1-lightgrey.svg)](/version.json)
+[![Version](https://img.shields.io/badge/version-0.0.1-lightgrey.svg)](/version.json)
 ![Code Size](https://img.shields.io/github/languages/code-size/N-language/N-.svg?colorB=red)
 [![Languages](https://img.shields.io/badge/C++-100.0%25-purple.svg)](/src)
 [![Issues](https://img.shields.io/github/issues/N-language/N-.svg?colorB=%23E518D8)](https://github.com/N-language/N-/issues)
