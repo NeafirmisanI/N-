@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -10,8 +11,12 @@ class Lexer {
         void lex();
         void advance();
         void skip_comment();
+        string parse_number();
+        string parse_identifier();
+        string parse_string();
         string charToString(char);
         bool in(char, string);
+        bool in(string, vector<string>);
 
         Lexer(string text) {
             code = text;
