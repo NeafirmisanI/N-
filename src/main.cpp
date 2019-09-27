@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstdio>
 #include <string>
+#include <tuple>
 #include "lexer.hpp"
 
 using namespace std;
@@ -9,7 +10,15 @@ using namespace std;
 void run(string code) {
 	Lexer lexer(code);
 
-	lexer.lex();
+	tuple<vector<Token>, string> res = lexer.lex();
+
+	if (get<1>(res) != "") {
+		cout << get<1>(res);
+		return;
+	}
+
+	for (Token n : get<0>(res)) // Output the contents for verification
+        cout << n.repr() << ", ";
 }
 
 void runRepl() {
@@ -21,7 +30,6 @@ void runRepl() {
 	while (1) {
 		cout << "N# > ";
 		getline(cin, input);
-		input += "\n";
 		run(input);
 		cout << "\n";
 	}
