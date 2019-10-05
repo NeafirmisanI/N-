@@ -10,10 +10,10 @@ using namespace std;
 void run(string code) {
 	Lexer lexer(code);
 
-	tuple<vector<Token>, string> res = lexer.lex();
+	tuple<vector<Token>, Error> res = lexer.lex();
 
-	if (get<1>(res) != "") {
-		cout << get<1>(res);
+	if (get<1>(res).details != "") {
+		cout << get<1>(res).as_string();
 		return;
 	}
 
@@ -30,6 +30,7 @@ void runRepl() {
 	while (1) {
 		cout << "N# > ";
 		getline(cin, input);
+		if (input == "^C") exit(0);
 		run(input);
 		cout << "\n";
 	}
