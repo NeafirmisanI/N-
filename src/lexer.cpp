@@ -11,7 +11,7 @@ static string digits = "0123456789";
 static string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static vector<string> KEYWORDS = {"var", "and", "or", "not", "if", "elif", "else", "for", "to", "step", "while", "def", "then", "end", "return", "continue", "break"};
 
-tuple<vector<Token>, string> Lexer::lex() {
+tuple<vector<Token>, Error> Lexer::lex() {
     vector<Token> tokens;
 
     while (current_char != '\0') {
@@ -20,7 +20,7 @@ tuple<vector<Token>, string> Lexer::lex() {
         } else if (current_char == '#') {
             skip_comment();
         } else if (in(current_char, "\n;")) {
-            tokens.push_back(Token("NEWLINE", "", pos, -2));
+            tokens.push_back(Token("NEWLINE", "", pos->inx, -2));
             advance();
         } else if (in(current_char, digits)) {
             tokens.push_back(parse_number());
@@ -29,40 +29,40 @@ tuple<vector<Token>, string> Lexer::lex() {
         } else if (current_char == '\"') {
             tokens.push_back(parse_string());
         } else if (current_char == '+') {
-            tokens.push_back(Token("PLUS", "\0", pos, -2));
+            tokens.push_back(Token("PLUS", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '-') {
-            tokens.push_back(Token("MINUS", "\0", pos, -2));
+            tokens.push_back(Token("MINUS", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '*') {
-            tokens.push_back(Token("MUL", "\0", pos, -2));
+            tokens.push_back(Token("MUL", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '/') {
-            tokens.push_back(Token("DIV", "\0", pos, -2));
+            tokens.push_back(Token("DIV", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '%') {
-            tokens.push_back(Token("MOD", "\0", pos, -2));
+            tokens.push_back(Token("MOD", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '^') {
-            tokens.push_back(Token("POW", "\0", pos, -2));
+            tokens.push_back(Token("POW", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '(') {
-            tokens.push_back(Token("LPAREN", "\0", pos, -2));
+            tokens.push_back(Token("LPAREN", "\0", pos->inx, -2));
             advance();
         } else if (current_char == ')') {
-            tokens.push_back(Token("RPAREN", "\0", pos, -2));
+            tokens.push_back(Token("RPAREN", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '[') {
-            tokens.push_back(Token("LSQARE", "\0", pos, -2));
+            tokens.push_back(Token("LSQARE", "\0", pos->inx, -2));
             advance();
         } else if (current_char == ']') {
-            tokens.push_back(Token("RSQARE", "\0", pos, -2));
+            tokens.push_back(Token("RSQARE", "\0", pos->inx, -2));
             advance();
         } else if (current_char == '!') {
-            tuple<Token, string> res = parse_not_equals();
+            tuple<Token, Error> res = parse_not_equals();
 
-            if (get<1>(res) != "") {
-                tuple<vector<Token>, string> eres({Token("\0", "\0", -2, -2)}, get<1>(res));
+            if (get<1>(res).details != "") {
+                tuple<vector<Token>, Error> eres({Token("\0", "\0", -2, -2)}, get<1>(res));
                 return eres;
             }
 
@@ -74,24 +74,24 @@ tuple<vector<Token>, string> Lexer::lex() {
         } else if (current_char == '>') {
             tokens.push_back(parse_greater_than());
         } else if (current_char == ',') {
-            tokens.push_back(Token("COMMA", "\0", pos, -2));
+            tokens.push_back(Token("COMMA", "\0", pos->inx, -2));
         } else {
-            int pos_start = pos;
+            Position* pos_start = pos;
             char c = current_char;
             string sc(1, c);
             advance();
-            tuple<vector<Token>, string> eres({Token("\0", "\0", -2, -2)}, "\'" + sc + "\'\n");
+            tuple<vector<Token>, Error> eres({Token("\0", "\0", -2, -2)}, Error(pos_start->inx, pos->inx, "Illegal Character", "\'" + sc + "\'\n"));
             return eres;
         }
     }
 
-    tokens.push_back(Token("EOF", "\0", pos, -2));
-    return make_tuple(tokens, "");
+    tokens.push_back(Token("EOF", "\0", pos->inx, -2));
+    return make_tuple(tokens, Error(-2, -2, "", ""));
 }
 
 void Lexer::advance() {
-    ++pos;
-    current_char = (pos < code.size()) ? code[pos] : '\0';
+    ++pos->inx;
+    current_char = (pos->inx < code.size()) ? code[pos->inx] : '\0';
 }
 
 void Lexer::skip_comment() {
@@ -104,24 +104,24 @@ void Lexer::skip_comment() {
     advance();
 }
 
-tuple<Token, string> Lexer::parse_not_equals() {
-    int pos_start = pos;
+tuple<Token, Error> Lexer::parse_not_equals() {
+    Position* pos_start = pos;
     advance();
 
     if (current_char == '=') {
         advance();
-        tuple<Token, string> res(Token("NE", "\0", pos_start, pos), "");
+        tuple<Token, Error> res(Token("NE", "\0", pos_start->inx, pos->inx), Error(-2, -2, "", ""));
         return res;
     }
 
     advance();
-    tuple<Token, string> res(Token("\0", "\0", -2, -2), "'=' (after '!')\n");
+    tuple<Token, Error> res(Token("\0", "\0", -2, -2), Error(-2, -2, "Expected Character", "'=' (after '!')\n"));
     return res;
 }
 
 Token Lexer::parse_equals() {
     string tok_type = "EQ";
-    int pos_start = pos;
+    Position* pos_start = pos;
     advance();
 
     if (current_char == '=') {
@@ -129,12 +129,12 @@ Token Lexer::parse_equals() {
         tok_type = "EE";
     }
 
-    return Token(tok_type, "\0", pos_start, pos);
+    return Token(tok_type, "\0", pos_start->inx, pos->inx);
 }
 
 Token Lexer::parse_less_than() {
     string tok_type = "LT";
-    int pos_start = pos;
+    Position* pos_start = pos;
     advance();
 
     if (current_char == '=') {
@@ -142,12 +142,12 @@ Token Lexer::parse_less_than() {
         tok_type = "LTE";
     }
 
-    return Token(tok_type, "\0", pos_start, pos);
+    return Token(tok_type, "\0", pos_start->inx, pos->inx);
 }
 
 Token Lexer::parse_greater_than() {
     string tok_type = "GT";
-    int pos_start = pos;
+    Position* pos_start = pos;
     advance();
 
     if (current_char == '=') {
@@ -155,13 +155,13 @@ Token Lexer::parse_greater_than() {
         tok_type = "GTE";
     }
 
-    return Token(tok_type, "\0", pos_start, pos);
+    return Token(tok_type, "\0", pos_start->inx, pos->inx);
 }
 
 Token Lexer::parse_number() {
     string num_str = "";
     bool dot = false;
-    int pos_start = pos;
+    Position* pos_start = pos;
 
     while (current_char != '\0' && in(current_char, digits + ".")) {
         if (current_char == '.') {
@@ -174,15 +174,15 @@ Token Lexer::parse_number() {
     }
 
     if (dot) {
-        return Token("FLOAT", num_str, pos_start, pos);
+        return Token("FLOAT", num_str, pos_start->inx, pos->inx);
     }
 
-    return Token("INT", num_str, pos_start, pos);
+    return Token("INT", num_str, pos_start->inx, pos->inx);
 }
 
 Token Lexer::parse_identifier() {
     string id_str = "";
-    int pos_start = pos;
+    Position* pos_start = pos;
 
     while (current_char != '\0' && in(current_char, letters + digits + "_")) {
         id_str += current_char;
@@ -190,12 +190,12 @@ Token Lexer::parse_identifier() {
     }
 
     string tok_type = (in(id_str, KEYWORDS)) ? "KEYWORD" : "IDENTIFIER";
-    return Token(tok_type, id_str, pos_start, pos);
+    return Token(tok_type, id_str, pos_start->inx, pos->inx);
 }
 
 Token Lexer::parse_string() {
     string str = "";
-    int pos_start = pos;
+    Position* pos_start = pos;
     bool escape_char = false;
     advance();
 
@@ -219,7 +219,7 @@ Token Lexer::parse_string() {
     }
 
     advance();
-    return Token("STRING", str, pos_start, pos);
+    return Token("STRING", str, pos_start->inx, pos->inx);
 }
 
 bool Lexer::in(char c, string str) {
