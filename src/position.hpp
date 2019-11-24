@@ -9,6 +9,7 @@ class Position {
         int col;
         string fn;
         string ftext;
+        void advance();
 
         Position(int index, int line, int column, string filename, string filetext) {
             inx = index;
