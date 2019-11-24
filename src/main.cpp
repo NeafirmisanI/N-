@@ -3,13 +3,12 @@
 #include <cstdio>
 #include <string>
 #include <tuple>
-#include "lexer.hpp"
+#include "mainClasses.hpp"
 
 using namespace std;
 
 void run(string code) {
 	Lexer lexer(code);
-
 	tuple<vector<Token>, Error> res = lexer.lex();
 
 	if (get<1>(res).details != "") {
@@ -17,8 +16,9 @@ void run(string code) {
 		return;
 	}
 
-	for (Token n : get<0>(res)) // Output the contents for verification
-        cout << n.repr() << ", ";
+
+	Parser parser(get<0>(res));
+	parser.parse();
 }
 
 void runRepl() {
@@ -31,6 +31,7 @@ void runRepl() {
 		cout << "N# > ";
 		getline(cin, input);
 		if (input == "^C") exit(0);
+		if (input.find_first_not_of(' ') == string::npos) continue;
 		run(input);
 		cout << "\n";
 	}
