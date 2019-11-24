@@ -1,1 +1,2 @@
-g++ -o main src/main.cpp src/lexer.cpp src/token.cpp
+cd src/
+g++ -o main main.cpp lexer.cpp token.cpp position.cpp parser.cpp error.cpp
