@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 #include <map>
-#include "lexer.hpp"
+#include "mainClasses.hpp"
 
 using namespace std;
 
@@ -76,21 +76,21 @@ tuple<vector<Token>, Error> Lexer::lex() {
         } else if (current_char == ',') {
             tokens.push_back(Token("COMMA", "\0", pos->inx, -2));
         } else {
-            Position* pos_start = pos;
+            Position *pos_start = new Position(pos->inx, pos->ln, pos->col, pos->fn, pos->ftext);
             char c = current_char;
             string sc(1, c);
             advance();
-            tuple<vector<Token>, Error> eres({Token("\0", "\0", -2, -2)}, Error(pos_start->inx, pos->inx, "Illegal Character", "\'" + sc + "\'\n"));
+            tuple<vector<Token>, Error> eres({Token("\0", "\0", -2, -2)}, Error(pos_start, pos, "Illegal Character", "\'" + sc + "\'\n"));
             return eres;
         }
     }
 
     tokens.push_back(Token("EOF", "\0", pos->inx, -2));
-    return make_tuple(tokens, Error(-2, -2, "", ""));
+    return make_tuple(tokens, Error(noPos, noPos, "", ""));
 }
 
 void Lexer::advance() {
-    ++pos->inx;
+    pos->advance();
     current_char = (pos->inx < code.size()) ? code[pos->inx] : '\0';
 }
 
@@ -105,17 +105,17 @@ void Lexer::skip_comment() {
 }
 
 tuple<Token, Error> Lexer::parse_not_equals() {
-    Position* pos_start = pos;
+    Position *pos_start = new Position(pos->inx, pos->ln, pos->col, pos->fn, pos->ftext);
     advance();
 
     if (current_char == '=') {
         advance();
-        tuple<Token, Error> res(Token("NE", "\0", pos_start->inx, pos->inx), Error(-2, -2, "", ""));
+        tuple<Token, Error> res(Token("NE", "\0", (pos_start)->inx, pos->inx), Error(noPos, noPos, "", ""));
         return res;
     }
 
     advance();
-    tuple<Token, Error> res(Token("\0", "\0", -2, -2), Error(-2, -2, "Expected Character", "'=' (after '!')\n"));
+    tuple<Token, Error> res(Token("\0", "\0", -2, -2), Error(pos_start, pos, "Expected Character", "'=' (after '!')\n"));
     return res;
 }
 
