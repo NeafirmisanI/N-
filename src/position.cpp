@@ -1,7 +1,5 @@
 #include <iostream>
-#include "position.hpp"
-
-using namespace std;
+#include "mainClasses.hpp"
 
 void Position::advance() {
     ++inx;
