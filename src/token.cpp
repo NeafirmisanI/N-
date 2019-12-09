@@ -1,13 +1,11 @@
 #include <iostream>
-#include "token.hpp"
+#include "mainClasses.hpp"
 
-using namespace std;
-
-bool Token::matches(string type_, string val) {
+bool Token::matches(std::string type_, std::string val) {
     return (type == type_) && (value == val);
 }
 
-string Token::repr() {
+std::string Token::repr() {
     if (value != "\0") return type + ":" + value;
     return type;
 }
