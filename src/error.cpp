@@ -1,14 +1,18 @@
 #include <iostream>
 #include "mainClasses.hpp"
 
+Error* Error::copy() {
+    return new Error(pos_start, pos_end, error_name, details);
+}
+
 std::string Error::as_string() {
-    std::string result = error_name + ": " + details + "\n";
+    std::string result = error_name + ": " + details + "\n\n";
     result += "File " + pos_start->fn + ", line " + std::to_string(pos_start->ln + 1);
-    result += "\n\n" + highlight(pos_start->ftext, pos_start, pos_end);
+    result += "\n\n" + highlight(pos_start->ftext);
     return result;
 }
 
-std::string Error::highlight(std::string text, Position* pos_start, Position* pos_end) {
+std::string Error::highlight(std::string text) {
     std::string result = "";
     int8_t idx_start = std::max(static_cast<int>(text.rfind("\n", 0, pos_start->inx)), 0);
     int8_t idx_end = static_cast<int>(text.find("\n", idx_start + 1));
