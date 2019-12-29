@@ -10,3 +10,7 @@ void Position::advance() {
         col = 0;
     }
 }
+
+Position* Position::copy() {
+    return new Position(inx, ln, col, fn, ftext);
+}
