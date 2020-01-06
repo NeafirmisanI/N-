@@ -1,20 +1,17 @@
 #include <algorithm>
 #include <iostream>
-#include <vector>
 #include <tuple>
-#include <map>
 #include "mainClasses.hpp"
 
 static std::string digits = "0123456789";
 static std::string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static std::vector<std::string> KEYWORDS = {"var", "and", "or", "not", "if", "elif", "else", "for", "to", "step", "while", "def", "then", "end", "return", "continue", "break"};
 
-std::tuple<std::vector<Token*>, Error> Lexer::lex() {
+std::tuple<std::vector<Token*>, Error*> Lexer::lex() {
     std::vector<Token*> tokens;
 
     while (current_char != '\0') {
         if (is_identifier(current_char)) tokens.push_back(parse_identifier());
-        if (current_char == '\"') tokens.push_back(parse_string());
         if (is_digit(current_char)) tokens.push_back(parse_number());
         
         switch (current_char) {
@@ -37,12 +34,13 @@ std::tuple<std::vector<Token*>, Error> Lexer::lex() {
             case '=': tokens.push_back(parse_equals()); break;
             case '<': tokens.push_back(parse_less_than()); break;
             case '>': tokens.push_back(parse_greater_than()); break;
+            case '\"': tokens.push_back(parse_string()); break;
             case '#': skip_comment(); break;
             case '!': {
-                    std::tuple<Token*, Error> res = parse_not_equals();
+                    std::tuple<Token*, Error*> res = parse_not_equals();
 
-                    if (std::get<1>(res).details != "") {
-                        std::tuple<std::vector<Token*>, Error> eres({noTok}, std::get<1>(res));
+                    if (std::get<1>(res) != nullptr) {
+                        std::tuple<std::vector<Token*>, Error*> eres({nullptr}, std::get<1>(res));
                         return eres;
                     }
 
@@ -52,16 +50,14 @@ std::tuple<std::vector<Token*>, Error> Lexer::lex() {
                     Position* pos_start = pos->copy();
                     std::string sc(1, current_char);
                     advance();
-                    std::tuple<std::vector<Token*>, Error> eres({noTok}, Error(pos_start, pos, "Illegal Character", "\'" + sc + "\'"));
+                    std::tuple<std::vector<Token*>, Error*> eres({nullptr}, new Error(pos_start, pos, "Illegal Character", "\'" + sc + "\'"));
                     return eres;
             }
         }
     }
 
-    Position* pos_start = pos->copy();
-    advance();
-    tokens.push_back(new Token("EOF", "\0", pos_start, pos));
-    return make_tuple(tokens, Error(noPos, noPos, "", ""));
+    tokens.push_back(make_token("EOF"));
+    return std::make_tuple(tokens, nullptr);
 }
 
 void Lexer::advance() {
@@ -94,18 +90,18 @@ Token* Lexer::parse_minus() {
     return new Token(tok_type, "\0", pos_start, pos);
 }
 
-std::tuple<Token*, Error> Lexer::parse_not_equals() {
+std::tuple<Token*, Error*> Lexer::parse_not_equals() {
     Position* pos_start = pos->copy();
     advance();
 
     if (current_char == '=') {
         advance();
-        std::tuple<Token*, Error> res(new Token("NE", "\0", pos_start, pos), Error(noPos, noPos, "", ""));
+        std::tuple<Token*, Error*> res(new Token("NE", "\0", pos_start, pos), nullptr);
         return res;
     }
 
     advance();
-    std::tuple<Token*, Error> res(new Token("\0", "\0", noPos, noPos), Error(pos_start, pos, "Expected Character", "'=' (after '!')"));
+    std::tuple<Token*, Error*> res(nullptr, new Error(pos_start, pos, "Expected Character", "'=' (after '!')"));
     return res;
 }
 
