@@ -9,6 +9,16 @@
 
 A new C-style programming language designed for beginners and written in C++
 
+## Installing
+###### This requires having Git and gcc installed
+```bash
+$ mkdir N#
+$ cd N#
+$ git clone https://github.com/N-language/N-/
+```
+
+Or simply download `N#.exe` directly from GitHub.
+
 ## Hello World in N#
 ```python
 # This is a comment #
