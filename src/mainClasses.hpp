@@ -45,6 +45,21 @@ class Error {
         }
 };
 
+class IllegalCharError : public Error {
+    public:
+        IllegalCharError(Position* pos_start, Position* pos_end, std::string details) : Error(pos_start, pos_end, "Illegal Character", details) { }
+};
+
+class ExpectedCharError : public Error {
+    public:
+        ExpectedCharError(Position* pos_start, Position* pos_end, std::string details) : Error(pos_start, pos_end, "Expected Character", details) { }
+};
+
+class InvalidSyntaxError : public Error {
+    public:
+        InvalidSyntaxError(Position* pos_start, Position* pos_end, std::string details) : Error(pos_start, pos_end, "Invalid Syntax", details) { }
+};
+
 class Token {
     public:
         std::string value;
@@ -54,7 +69,7 @@ class Token {
         bool matches(std::string type_, std::string val);
         std::string repr();
 
-        Token(std::string type_, std::string val, Position* pos_strt, Position* pos_nd = new Position(-2, -2, -2, "", "")) {
+        Token(std::string type_, std::string val, Position* pos_strt, Position* pos_nd = nullptr) {
             type = type_;
             value = val;
             pos_start = pos_strt;
@@ -302,6 +317,7 @@ class Value {
         Position* pos_end;
         Value* set_pos(Position* pos_s = nullptr, Position* pos_e = nullptr);
         Value* set_context(Context* context_ = nullptr);
+        Error* illegal_operation(Value* other = nullptr);
 
         Value() {
             set_pos();
