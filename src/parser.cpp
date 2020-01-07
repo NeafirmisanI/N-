@@ -3,7 +3,7 @@
 
 ParseResult* Parser::parse() {
     ParseResult* res = statements();
-    if (res->error->details == "" && current_tok->type != "EOF") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Token cannot appear after previous tokens"));
+    if (res->error == nullptr && current_tok->type != "EOF") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Token cannot appear after previous tokens"));
     return res;
 }
 
@@ -18,7 +18,7 @@ ParseResult* Parser::statements() {
     }
 
     Node* statement = res->register_(statement_());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
     statements.push_back(statement);
 
     bool more_statements = true;
@@ -36,7 +36,7 @@ ParseResult* Parser::statements() {
         if (!more_statements) break;
 
         statement = res->try_register(statement_());
-        if (!statement) {
+        if ((int) statement->pos_start->inx == -2) {
             reverse(res->to_reverse_count);
             more_statements = false;
             continue;
@@ -73,7 +73,7 @@ ParseResult* Parser::statement_() {
     }
 
     Node* expression = res->register_(expr());
-    if (res->error->details != "") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'return', 'continue', 'break', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
+    if (res->error != nullptr) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'return', 'continue', 'break', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
     return res->success(expression);
 }
 
@@ -84,24 +84,24 @@ ParseResult* Parser::expr() {
         res->register_advancement();
         advance();
 
-        if (current_tok->type != "IDENTIFIER") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected identifier"));
+        if (current_tok->type != "IDENTIFIER") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected identifier"));
 
         Token* var_name = current_tok;
         res->register_advancement();
         advance();
 
-        if (current_tok->type != "EQ") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '='"));
+        if (current_tok->type != "EQ") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '='"));
 
         res->register_advancement();
         advance();
 
         Node* expression = res->register_(expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(new VarAssignNode(var_name, expression));
     }
 
     Node* node = res->register_(bin_op([this]() { return comp_expr(); }, {"and", "or"}, [this]() { return comp_expr(); }));
-    if (res->error->details != "") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
+    if (res->error != nullptr) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
     return res->success(node);
 }
 
@@ -114,12 +114,12 @@ ParseResult* Parser::comp_expr() {
         advance();
 
         Node* node = res->register_(comp_expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(new UnaryOpNode(op_tok, node));
     }
 
     Node* node = res->register_(bin_op([this]() { return arith_expr(); }, {"EE", "NE", "LT", "GT", "LTE", "GTE"}, [this]() { return arith_expr(); }));
-    if (res->error->details != "") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected int, float, identifier, '+', '-', '(', '[', 'if', 'for', 'while', 'def' or 'not'"));
+    if (res->error != nullptr) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected int, float, identifier, '+', '-', '(', '[', 'if', 'for', 'while', 'def' or 'not'"));
     return res->success(node);
 }
 
@@ -139,7 +139,7 @@ ParseResult* Parser::factor() {
         res->register_advancement();
         advance();
         Node* factor_ = res->register_(factor());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(new UnaryOpNode(tok, factor_));
     }
 
@@ -159,7 +159,7 @@ ParseResult* Parser::modulus() {
 ParseResult* Parser::call() {
     ParseResult* res = new ParseResult();
     Node* atom_ = res->register_(atom());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
     if (current_tok->type == "LPAREN") {
         res->register_advancement();
@@ -171,17 +171,17 @@ ParseResult* Parser::call() {
             advance();
         } else {
             arg_nodes.push_back(res->register_(expr()));
-            if (res->error->details != "") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ')', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
+            if (res->error != nullptr) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ')', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
 
             while (current_tok->type == "COMMA") {
                 res->register_advancement();
                 advance();
 
                 arg_nodes.push_back(res->register_(expr()));
-                if (res->error->details != "") return res;
+                if (res->error != nullptr) return res;
             }
 
-            if (current_tok->type != "RPAREN") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ',' or ')'"));
+            if (current_tok->type != "RPAREN") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ',' or ')'"));
             res->register_advancement();
             advance();
         }
@@ -204,7 +204,7 @@ ParseResult* Parser::atom() {
         res->register_advancement();
         advance();
         return res->success(new StringNode(tok));
-    } else if (tok->type == "IDENTIFIER") { //TODO: Add variable recognition
+    } else if (tok->type == "IDENTIFIER") { //TODO: Add variable recognition. This can only be added after interpreter is completed.
         res->register_advancement();
         advance();
         return res->success(new VarAccessNode(tok));
@@ -213,38 +213,38 @@ ParseResult* Parser::atom() {
         advance();
 
         Node* expression = res->register_(expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
 
         if (current_tok->type == "RPAREN") {
             res->register_advancement();
             advance();
             return res->success(expression);
         } else {
-            return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ')'"));
+            return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ')'"));
         }
     } else if (tok->type == "LSQUARE") {
         Node* expression = res->register_(list_expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(expression);
     } else if (tok->matches("KEYWORD", "if")) {
         Node* expression = res->register_(if_expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(expression);
     } else if (tok->matches("KEYWORD", "for")) {
         Node* expression = res->register_(for_expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(expression);
     } else if (tok->matches("KEYWORD", "while")) {
         Node* expression = res->register_(while_expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(expression);
     } else if (tok->matches("KEYWORD", "def")) {
         Node* expression = res->register_(func_def());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         return res->success(expression);
     }
 
-    return res->failure(new Error(tok->pos_start, tok->pos_end, "Invalid Syntax", "Expected int, float, identifier, '+', '-', '(', '[', if', 'for', 'while', 'def'"));
+    return res->failure(new InvalidSyntaxError(tok->pos_start, tok->pos_end, "Expected int, float, identifier, '+', '-', '(', '[', if', 'for', 'while', 'def'"));
 }
 
 ParseResult* Parser::list_expr() {
@@ -252,7 +252,7 @@ ParseResult* Parser::list_expr() {
     std::vector<Node*> elements = {};
     Position* pos_start = current_tok->pos_start->copy();
 
-    if (current_tok->type != "LSQUARE") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '['"));
+    if (current_tok->type != "LSQUARE") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '['"));
 
     res->register_advancement();
     advance();
@@ -262,17 +262,17 @@ ParseResult* Parser::list_expr() {
         advance();
     } else {
         elements.push_back(res->register_(expr()));
-        if (res->error->details != "") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ']', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
+        if (res->error != nullptr) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ']', 'var', 'if', 'for', 'while', 'def', int, float, identifier, '+', '-', '(', '[' or 'not'"));
 
         while (current_tok->type == "COMMA") {
             res->register_advancement();
             advance();
 
             elements.push_back(res->register_(expr()));
-            if (res->error->details != "") return res;
+            if (res->error != nullptr) return res;
         }
 
-        if (current_tok->type != "RSQUARE") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ',' or ']'"));
+        if (current_tok->type != "RSQUARE") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ',' or ']'"));
         res->register_advancement();
         advance();
     }
@@ -283,7 +283,7 @@ ParseResult* Parser::list_expr() {
 ParseResult* Parser::if_expr() {
     ParseResult* res = new ParseResult();
     Node* all_cases = res->register_(if_expr_cases("if"));
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
     std::vector<std::tuple<Node*, Node*, bool>> cases = all_cases->cases;
     std::tuple<Node*, bool> else_case = all_cases->else_case;
     return res->success(new IfNode(cases, else_case));
@@ -294,15 +294,15 @@ ParseResult* Parser::if_expr_cases(std::string case_keyword) {
     std::vector<std::tuple<Node*, Node*, bool>> cases = {};
     std::tuple<Node*, bool> else_case;
 
-    if (!current_tok->matches("KEYWORD", case_keyword)) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '" + case_keyword + "'"));
+    if (!current_tok->matches("KEYWORD", case_keyword)) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '" + case_keyword + "'"));
 
     res->register_advancement();
     advance();
 
     Node* condition = res->register_(expr());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
-    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'then'"));
+    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'then'"));
 
     res->register_advancement();
     advance();
@@ -312,7 +312,7 @@ ParseResult* Parser::if_expr_cases(std::string case_keyword) {
         advance();
 
         Node* statements_ = res->register_(statements());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         cases.emplace_back(condition, statements_, true);
 
         if (current_tok->matches("KEYWORD", "end")) {
@@ -320,18 +320,18 @@ ParseResult* Parser::if_expr_cases(std::string case_keyword) {
             advance();
         } else {
             Node* all_cases = res->register_(if_expr_b_or_c());
-            if (res->error->details != "") return res;
+            if (res->error != nullptr) return res;
             std::vector<std::tuple<Node*, Node*, bool>> new_cases = all_cases->cases;
             std::tuple<Node*, bool> else_case = all_cases->else_case;
             cases.insert(std::end(cases), std::begin(new_cases), std::end(new_cases));
         }
     } else {
         Node* statements_ = res->register_(statements());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         cases.emplace_back(condition, statements_, false);
 
         Node* all_cases = res->register_(if_expr_b_or_c());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         std::vector<std::tuple<Node*, Node*, bool>> new_cases = all_cases->cases;
         std::tuple<Node*, bool> else_case = all_cases->else_case;
         cases.insert(std::end(cases), std::begin(new_cases), std::end(new_cases));
@@ -350,12 +350,12 @@ ParseResult* Parser::if_expr_b_or_c() {
 
     if (current_tok->matches("KEYWORD", "elif")) {
         Node* all_cases = res->register_(if_expr_b());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         cases = all_cases->cases;
         std::tuple<Node*, bool> else_case = all_cases->else_case;
     } else {
         Node* else_case = res->register_(if_expr_c());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
     }
 
     Node* to_return = new Node();
@@ -381,18 +381,18 @@ ParseResult* Parser::if_expr_c() {
             advance();
 
             Node* statements_ = res->register_(statements());
-            if (res->error->details != "") return res;
+            if (res->error != nullptr) return res;
             else_case = std::make_tuple(statements_, true);
 
             if (current_tok->matches("KEYWORD", "end")) {
                 res->register_advancement();
                 advance();
             } else {
-                return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'end'"));
+                return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'end'"));
             }
         } else {
             Node* expression = res->register_(expr());
-            if (res->error->details != "") return res;
+            if (res->error != nullptr) return res;
             else_case = std::make_tuple(expression, false);
         }
     }
@@ -405,32 +405,32 @@ ParseResult* Parser::if_expr_c() {
 ParseResult* Parser::for_expr() {
     ParseResult* res = new ParseResult();
 
-    if (!current_tok->matches("KEYWORD", "for")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'for'"));
+    if (!current_tok->matches("KEYWORD", "for")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'for'"));
 
     res->register_advancement();
     advance();
 
-    if (current_tok->type != "IDENTIFIER") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected identifier"));
+    if (current_tok->type != "IDENTIFIER") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected identifier"));
 
     Token* var_name = current_tok;
     res->register_advancement();
     advance();
 
-    if (current_tok->type != "EQ") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '='"));
+    if (current_tok->type != "EQ") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '='"));
 
     res->register_advancement();
     advance();
 
     Node* start_value = res->register_(expr());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
-    if (!current_tok->matches("KEYWORD", "to")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'to'"));
+    if (!current_tok->matches("KEYWORD", "to")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'to'"));
 
     res->register_advancement();
     advance();
 
     Node* end_value = res->register_(expr());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
     Node* step_value;
     if (current_tok->matches("KEYWORD", "step")) {
@@ -438,12 +438,12 @@ ParseResult* Parser::for_expr() {
         advance();
 
         Node* step_value = res->register_(expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
     } else {
         Node* step_value = new Node();
     }
 
-    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'then'"));
+    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'then'"));
 
     res->register_advancement();
     advance();
@@ -453,9 +453,9 @@ ParseResult* Parser::for_expr() {
         advance();
 
         Node* body = res->register_(statements());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
 
-        if (!current_tok->matches("KEYWORD", "end")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'end'"));
+        if (!current_tok->matches("KEYWORD", "end")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'end'"));
 
         res->register_advancement();
         advance();
@@ -464,7 +464,7 @@ ParseResult* Parser::for_expr() {
     }
 
     Node* body = res->register_(statement_());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
     return res->success(new ForNode(var_name, start_value, end_value, step_value, body, false));
 }
@@ -472,15 +472,15 @@ ParseResult* Parser::for_expr() {
 ParseResult* Parser::while_expr() {
     ParseResult* res = new ParseResult();
 
-    if (!current_tok->matches("KEYWORD", "while")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'while'"));
+    if (!current_tok->matches("KEYWORD", "while")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'while'"));
 
     res->register_advancement();
     advance();
 
     Node* condition = res->register_(expr());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
-    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'then'"));
+    if (!current_tok->matches("KEYWORD", "then")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'then'"));
 
     res->register_advancement();
     advance();
@@ -490,9 +490,9 @@ ParseResult* Parser::while_expr() {
         advance();
 
         Node* body = res->register_(statements());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
 
-        if (!current_tok->matches("KEYWORD", "end")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'end'"));
+        if (!current_tok->matches("KEYWORD", "end")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'end'"));
 
         res->register_advancement();
         advance();
@@ -501,7 +501,7 @@ ParseResult* Parser::while_expr() {
     }
 
     Node* body = res->register_(statement_());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
     return res->success(new WhileNode(condition, body, false));
 }
@@ -509,7 +509,7 @@ ParseResult* Parser::while_expr() {
 ParseResult* Parser::func_def() {
     ParseResult* res = new ParseResult();
 
-    if (!current_tok->matches("KEYWORD", "def")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'def'"));
+    if (!current_tok->matches("KEYWORD", "def")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'def'"));
 
     res->register_advancement();
     advance();
@@ -519,10 +519,10 @@ ParseResult* Parser::func_def() {
         var_name = current_tok;
         res->register_advancement();
         advance();
-        if (current_tok->type != "LPAREN") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '('"));
+        if (current_tok->type != "LPAREN") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '('"));
     } else {
         var_name = new Token("", "\0", noPos);
-        if (current_tok->type != "LPAREN") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected identifier or '('"));
+        if (current_tok->type != "LPAREN") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected identifier or '('"));
     }
 
     res->register_advancement();
@@ -538,16 +538,16 @@ ParseResult* Parser::func_def() {
             res->register_advancement();
             advance();
 
-            if (current_tok->type == "IDENTIFIER") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected identifier"));
+            if (current_tok->type == "IDENTIFIER") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected identifier"));
 
             arg_names.push_back(current_tok);
             res->register_advancement();
             advance();
         }
 
-        if (current_tok->type != "RPAREN") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected ',' or ')'"));
+        if (current_tok->type != "RPAREN") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected ',' or ')'"));
     } else {
-        if (current_tok->type != "RPAREN") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected identifier or ')'"));
+        if (current_tok->type != "RPAREN") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected identifier or ')'"));
     }
 
     res->register_advancement();
@@ -558,20 +558,20 @@ ParseResult* Parser::func_def() {
         advance();
 
         Node* body = res->register_(expr());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
 
         return res->success(new FuncDefNode(var_name, arg_names, body, true));
     }
 
-    if (current_tok->type != "NEWLINE") return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected '->' or newline"));
+    if (current_tok->type != "NEWLINE") return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected '->' or newline"));
 
     res->register_advancement();
     advance();
 
     Node* body = res->register_(statements());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
-    if (!current_tok->matches("KEYWORD", "end")) return res->failure(new Error(current_tok->pos_start, current_tok->pos_end, "Invalid Syntax", "Expected 'end'"));
+    if (!current_tok->matches("KEYWORD", "end")) return res->failure(new InvalidSyntaxError(current_tok->pos_start, current_tok->pos_end, "Expected 'end'"));
 
     res->register_advancement();
     advance();
@@ -582,14 +582,14 @@ ParseResult* Parser::func_def() {
 ParseResult* Parser::bin_op(std::function<ParseResult*()> func_a, std::vector<std::string> ops, std::function<ParseResult*()> func_b) {
     ParseResult* res = new ParseResult();
     Node* left = res->register_(func_a());
-    if (res->error->details != "") return res;
+    if (res->error != nullptr) return res;
 
     while (in(current_tok->type, ops) || in(current_tok->value, ops)) {
         Token* op_tok = current_tok;
         res->register_advancement();
         advance();
         Node* right = res->register_(func_b());
-        if (res->error->details != "") return res;
+        if (res->error != nullptr) return res;
         left = new BinOpNode(left, op_tok, right);
     }
 
@@ -638,6 +638,6 @@ ParseResult* ParseResult::success(Node* node_) {
 }
 
 ParseResult* ParseResult::failure(Error* error_) {
-    if (error->details == "" || (int) last_registered_advance_count == 0) error = error_->copy();
+    if (error == nullptr || (int) last_registered_advance_count == 0) error = error_->copy();
     return this;
 }
