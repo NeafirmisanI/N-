@@ -50,7 +50,7 @@ std::tuple<std::vector<Token*>, Error*> Lexer::lex() {
                     Position* pos_start = pos->copy();
                     std::string sc(1, current_char);
                     advance();
-                    std::tuple<std::vector<Token*>, Error*> eres({nullptr}, new Error(pos_start, pos, "Illegal Character", "\'" + sc + "\'"));
+                    std::tuple<std::vector<Token*>, Error*> eres({nullptr}, new IllegalCharError(pos_start, pos, "\'" + sc + "\'"));
                     return eres;
             }
         }
@@ -101,7 +101,7 @@ std::tuple<Token*, Error*> Lexer::parse_not_equals() {
     }
 
     advance();
-    std::tuple<Token*, Error*> res(nullptr, new Error(pos_start, pos, "Expected Character", "'=' (after '!')"));
+    std::tuple<Token*, Error*> res(nullptr, new ExpectedCharError(pos_start, pos, "'=' (after '!')"));
     return res;
 }
 
