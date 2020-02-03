@@ -1,10 +1,28 @@
+#ifdef _WIN32
+#include <windows.h>
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#elif _WIN64
+#include <windows.h>
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <sys/utsname.h>
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 #include <functional>
+#include <filesystem>
 #include <algorithm>
 #include <iostream>
+#include <string.h>
+#include <stdio.h>
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <cmath>
 #include <tuple>
+#include <any>
 #include <map>
 
 class Position {
@@ -26,15 +44,41 @@ class Position {
         }
 };
 
+class SymbolTable {
+    public:
+        std::map<std::string, std::string> symbols;
+        SymbolTable* parent;
+        std::string get(std::string key);
+        void set(std::string name, std::string value);
+        void remove();
+
+        SymbolTable(SymbolTable* parent_ = nullptr) {
+            parent = parent_;
+        }
+};
+
+class Context {
+    public:
+        std::string display_name;
+        Context* parent;
+        Position* parent_entry_pos;
+        SymbolTable* symbol_table;
+
+        Context(std::string display_name_, Context* parent_ = nullptr, Position* parent_entry_pos_ = new Position(-2, -2, -2, "", "")) {
+            display_name = display_name_;
+            parent = parent_;
+            parent_entry_pos = parent_entry_pos_;
+        }
+};
+
 class Error {
-    private:
-        std::string highlight(std::string text);
     public:
         Position* pos_start;
         Position* pos_end;
         std::string error_name;
         std::string details;
         std::string as_string();
+        std::string highlight(std::string text);
         Error* copy();
 
         Error(Position* pos_s, Position* pos_e, std::string error_nam, std::string detail) {
@@ -59,6 +103,18 @@ class InvalidSyntaxError : public Error {
     public:
         InvalidSyntaxError(Position* pos_start, Position* pos_end, std::string details) : Error(pos_start, pos_end, "Invalid Syntax", details) { }
 };
+
+class RTError : public Error {
+    public:
+        Context* context;
+        std::string as_string();
+        std::string generate_traceback();
+
+        RTError(Position* pos_start, Position* pos_end, std::string details, Context* context_) : Error(pos_start, pos_end, "Runtime Error", details) {
+            context = context_;
+        }
+};
+
 
 class Token {
     public:
@@ -283,48 +339,6 @@ class BreakNode : public Node {
         }
 };
 
-class SymbolTable {
-    public:
-        std::map<std::string, std::string> symbols;
-        SymbolTable* parent;
-        std::string get(std::string key);
-        void set(std::string name, std::string value);
-        void remove();
-
-        SymbolTable(SymbolTable* parent_ = nullptr) {
-            parent = parent_;
-        }
-};
-
-class Context {
-    public:
-        std::string display_name;
-        Context* parent;
-        Position* parent_entry_pos;
-        SymbolTable* symbol_table;
-
-        Context(std::string display_name_, Context* parent_ = nullptr, Position* parent_entry_pos_ = new Position(-2, -2, -2, "", "")) {
-            display_name = display_name_;
-            parent = parent_;
-            parent_entry_pos = parent_entry_pos_;
-        }
-};
-
-class Value {
-    public:
-        Context* context;
-        Position* pos_start;
-        Position* pos_end;
-        Value* set_pos(Position* pos_s = nullptr, Position* pos_e = nullptr);
-        Value* set_context(Context* context_ = nullptr);
-        Error* illegal_operation(Value* other = nullptr);
-
-        Value() {
-            set_pos();
-            set_context();
-        }
-};
-
 class ParseResult {
     private:
         Position* noPos = nullptr;
@@ -342,6 +356,8 @@ class ParseResult {
 
         ParseResult() { }
 };
+
+class Value;
 
 class RTResult {
     private:
@@ -363,6 +379,96 @@ class RTResult {
 
         RTResult() {
             reset();
+        }
+};
+
+class Value {
+    public:
+        int8_t int_value;
+        std::string str_value;
+        Context* context;
+        Position* pos_start;
+        Position* pos_end;
+        Value* set_pos(Position* pos_s = nullptr, Position* pos_e = nullptr);
+        Value* set_context(Context* context_ = nullptr);
+        virtual std::tuple<Value*, Error*> added_to(Value* other);
+        virtual std::tuple<Value*, Error*> subbed_by(Value* other);
+        virtual std::tuple<Value*, Error*> multed_by(Value* other);
+        virtual std::tuple<Value*, Error*> dived_by(Value* other);
+        virtual std::tuple<Value*, Error*> powed_by(Value* other);
+        virtual std::tuple<Value*, Error*> modded_by(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_eq(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_ne(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_lt(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_gt(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_lte(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_gte(Value* other);
+        virtual std::tuple<Value*, Error*> anded_by(Value* other);
+        virtual std::tuple<Value*, Error*> ored_by(Value* other);
+        virtual std::tuple<Value*, Error*> notted();
+        virtual std::tuple<Value*, Error*> round();
+        virtual std::tuple<Value*, Error*> abs();
+        virtual std::tuple<Value*, Error*> floor();
+        virtual std::tuple<Value*, Error*> ceil();
+        virtual std::tuple<Value*, Error*> sin();
+        virtual std::tuple<Value*, Error*> cos();
+        virtual std::tuple<Value*, Error*> tan();
+        RTResult* execute(std::vector<Value*> args);
+        Value* copy();
+        bool is_true();
+        Error* illegal_operation(Value* other = nullptr);
+
+        Value() {
+            set_pos();
+            set_context();
+        }
+};
+
+class Number : public Value {
+    public:
+        int8_t value;
+        virtual std::tuple<Value*, Error*> added_to(Value* other);
+        virtual std::tuple<Value*, Error*> subbed_by(Value* other);
+        virtual std::tuple<Value*, Error*> multed_by(Value* other);
+        virtual std::tuple<Value*, Error*> dived_by(Value* other);
+        virtual std::tuple<Value*, Error*> powed_by(Value* other);
+        virtual std::tuple<Value*, Error*> modded_by(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_eq(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_ne(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_lt(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_gt(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_lte(Value* other);
+        virtual std::tuple<Value*, Error*> get_comparison_gte(Value* other);
+        virtual std::tuple<Value*, Error*> anded_by(Value* other);
+        virtual std::tuple<Value*, Error*> ored_by(Value* other);
+        virtual std::tuple<Value*, Error*> notted();
+        virtual std::tuple<Value*, Error*> round();
+        virtual std::tuple<Value*, Error*> abs();
+        virtual std::tuple<Value*, Error*> floor();
+        virtual std::tuple<Value*, Error*> ceil();
+        virtual std::tuple<Value*, Error*> sin();
+        virtual std::tuple<Value*, Error*> cos();
+        virtual std::tuple<Value*, Error*> tan();
+        Value* copy();
+        bool is_true();
+        std::string repr();
+        
+        Number(int8_t val) : Value() {
+            int_value = val;
+        }
+};
+
+class String_ : public Value {
+    public:
+        std::string str_value;
+        virtual std::tuple<Value*, Error*> added_to(Value* other);
+        virtual std::tuple<Value*, Error*> multed_by(Value* other);
+        Value* copy();
+        bool is_true();
+        std::string repr();
+
+        String_(std::string val) : Value() {
+            str_value = val;
         }
 };
 
@@ -462,10 +568,107 @@ class Interpreter {
         }
 };
 
+template<typename Base, typename T>
+inline bool instanceof(const T*) {
+    return std::is_base_of<Base, T>::value;
+}
+
 inline bool in(char c, std::string str) {
     return str.find(c) != std::string::npos;
 }
 
 inline bool in(std::string str, std::vector<std::string> array) {
     return find(array.begin(), array.end(), str) != array.end();
+}
+
+inline std::string get_os_name() {
+    #ifdef _WIN32
+    return "Windows";
+    #elif _WIN64
+    return "Windows";
+    #elif __APPLE__ || __MACH__
+    return "Mac OS";
+    #elif __linux__
+    return "Linux";
+    #elif __unix || __unix__
+    return "Unix";
+    #else
+    return "Unknown";
+    #endif
+}
+
+inline std::string get_windows_version() {
+    OSVERSIONINFOEX info;
+    ZeroMemory(&info, sizeof(OSVERSIONINFOEX));
+    info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    GetVersionEx((LPOSVERSIONINFO) &info);
+
+    if (info.dwMajorVersion == 6) {
+        if (info.dwMinorVersion == 0) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "Vista";
+            } else {
+                return "Server 2008";
+            }
+        } else if (info.dwMinorVersion == 1) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "7";
+            } else {
+                return "Server 2008 R2";
+            }
+        } else if (info.dwMinorVersion == 2) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "8";
+            } else {
+                return "Server 2012";
+            }
+        } else if (info.dwMinorVersion == 3) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "8.1 or 10";
+            } else {
+                return "Server 2012 R2";
+            }
+        }
+    } else if (info.dwMajorVersion == 5) {
+        if (info.dwMinorVersion == 2) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "XP";
+            } else if (GetSystemMetrics(SM_SERVERR2) == 0) {
+                return "Server 2003";
+            } else if (GetSystemMetrics(SM_SERVERR2) != 0) {
+                return "Server 2003 R2";
+            } else {
+                return "Home Server";
+            }
+        } else if (info.dwMinorVersion == 3) {
+            if (info.wProductType == VER_NT_WORKSTATION) {
+                return "8.1 or 10";
+            } else {
+                return "Server 2012 R2";
+            }
+        }
+    }
+
+    return "";
+}
+
+inline std::string get_os_version() {
+    #ifdef _WIN32
+    return get_windows_version();
+    #elif _WIN64
+    return get_windows_version();
+    #elif __APPLE__ || __MACH__ || __unix || __unix__ || __linux__
+    struct utsname uts;
+    uname(&uts);
+    return uts.release;
+    #endif
+
+    return "";
+}
+
+inline std::string get_cwd() {
+    char buff[FILENAME_MAX];
+    GetCurrentDir(buff, FILENAME_MAX);
+    std::string current_working_dir(buff);
+    return current_working_dir;
 }
