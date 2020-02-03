@@ -28,6 +28,7 @@ void run(std::string code) {
     ParseResult* ast = parser->parse();
     delete parser;
 
+
     if (ast->error != nullptr) {
         std::cout << ast->error->as_string();
         return;
