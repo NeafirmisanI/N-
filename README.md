@@ -10,7 +10,7 @@
 A new C-style programming language designed for beginners and written in C++
 
 ## Installing
-###### This requires having Git and gcc installed
+###### This requires having Git and g++ installed
 ```bash
 $ mkdir N#
 $ cd N#
